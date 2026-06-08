@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 2026-06-07 — Sprint 0 concluída: mapeamento da codebase
+
+### Resumo
+Mapeamento completo da codebase realizado. 11 achados críticos/importantes documentados. .gitignore atualizado com .env. Git inicializado com commit inicial (3ff58a7). Relatório detalhado em `docs/implementation/Sprint-0-codebase-map.md`.
+
+### Arquivos afetados
+- `docs/implementation/Sprint-0-codebase-map.md` (criado)
+- `.gitignore` (.env adicionado)
+- `.git/` (inicializado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/HANDOFF.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+- `docs/evolution/DECISIONS.md` (6 decisões de PDs registradas)
+
+### Motivo
+Mapear a codebase antes de qualquer alteração. Resolver PDs pendentes. Preparar terreno para Sprint 1.
+
+### Evidência
+- `Sprint-0-codebase-map.md` existe com 8 seções, 11 achados, estrutura completa.
+- Git inicializado: commit 3ff58a7 com 52 arquivos.
+- .gitignore inclui .env.
+- 6 PDs resolvidos e registrados em DECISIONS.md.
+
+---
+
 ## 2026-06-07 — Plano de implementação e guia UI/UX criados
 
 ### Resumo

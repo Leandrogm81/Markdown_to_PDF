@@ -1,33 +1,31 @@
 # Current State
 
 ## Estado atual
-Todos os PDs resolvidos. 6 novas decisões registradas (autosave=NÃO, 8MB import, confirmação=substituir, templates existentes, DOMPurify, sem tema escuro). Pronto para executar Sprint 0 (mapear codebase).
+Sprint 0 concluída. Codebase mapeada (11 achados). PDs resolvidos. Git inicializado (commit 3ff58a7). Pronto para Sprint 1 (migrar CDNs para npm).
 
 ## Última ação relevante
-PDs resolvidos pelo usuário. DECISIONS.md atualizado com 6 decisões novas.
+Sprint 0 executada: mapeamento completo, .gitignore corrigido, git init. Relatório em `docs/implementation/Sprint-0-codebase-map.md`.
 
 ## Arquivos relevantes
-- `docs/product/PRD_v1.1.md` — PRD consolidado (fonte principal)
-- `docs/design/UI_UX_GUIDE.md` — guia visual obrigatório
-- `docs/implementation/SPRINT_00_PREPARACAO.md` — sprint atual
-- `docs/implementation/implementation-plan.md` — plano geral
-- `docs/agent/HANDOFF.md` — continuidade completa
+- `docs/implementation/Sprint-0-codebase-map.md` — mapa do codebase (fonte principal agora)
+- `docs/implementation/SPRINT_01_MIGRACAO_DEPS.md` — próxima sprint
+- `docs/product/PRD_v1.1.md` — PRD consolidado
+- `docs/design/UI_UX_GUIDE.md` — guia visual
 
 ## Pendências imediatas
-- Nenhuma. Todos os PDs resolvidos.
+- Nenhuma. Pronto para Sprint 1.
 
 ## Riscos atuais
-- Migração de CDNs (Sprint 1) é bloqueante para todas as outras sprints.
-- Sem testes automatizados.
-- Git não inicializado.
+- Migração de CDNs (Sprint 1) pode quebrar build.
+- tsconfig strict mode pode revelar muitos erros de tipo.
+- Import maps CDN para React precisam ser removidos.
 
 ## Próxima ação recomendada
-Executar Sprint 0: mapear codebase (8 tarefas de leitura).
+Executar Sprint 1: migrar marked, jspdf, html2canvas, Tailwind de CDN para npm.
 
 ## Não fazer agora
-- Não recomeçar PRD ou plano.
-- Não implementar código antes de completar Sprint 0.
-- Não pular Sprint 0.
+- Não implementar funcionalidades novas antes de Sprint 1.
+- Não pular a migração de CDNs.
 
 ## Seguro rodar `/new`?
-Sim — PDs resolvidos, decisões registradas, continuidade atualizada.
+Sim — Sprint 0 completa, codebase mapeada, git inicializado, PDs resolvidos.
