@@ -169,6 +169,66 @@ Registro de decisoes permanentes do projeto.
 
 **Status:** ativa.
 
+### 2026-06-07 — Manter 5 presets de estilo existentes
+
+**Contexto:** PD-05 perguntava quais presets de estilo estariam disponíveis no MVP.
+
+**Decisao:** Manter os 5 presets já implementados: modern (sans-serif), classic (serif), tech (monospace), moleskine (serif itálico), executive (sans-serif uppercase).
+
+**Motivo:** Sugestão aceita pelo usuário. São suficientes para o público-alvo (pessoa não técnica).
+
+**Impacto:** Não criar novos presets no MVP.
+
+**Status:** ativa.
+
+### 2026-06-07 — Manter 4 temas de capa existentes
+
+**Contexto:** PD-06 perguntava quais temas de capa estariam disponíveis no MVP.
+
+**Decisao:** Manter os 4 temas já implementados: minimal, bold, split, stripe.
+
+**Motivo:** Sugestão aceita pelo usuário. Variados o suficiente.
+
+**Impacto:** Não criar novos temas de capa no MVP.
+
+**Status:** ativa.
+
+### 2026-06-07 — Manter 4 templates existentes
+
+**Contexto:** PD-07 perguntava quantos e quais templates no MVP.
+
+**Decisao:** Manter os 4 templates já implementados: Relatório Executivo, Currículo Profissional, Artigo Acadêmico, Manual Técnico API.
+
+**Motivo:** Sugestão aceita pelo usuário. Cobrem os casos de uso principais.
+
+**Impacto:** Não criar novos templates no MVP.
+
+**Status:** ativa.
+
+### 2026-06-07 — Manter 7 heurísticas existentes
+
+**Contexto:** PD-08 perguntava quais heurísticas além de título/subtítulo.
+
+**Decisao:** Manter as 7 heurísticas já implementadas: título, subtítulo, autor, data, instituição, header text, footer text.
+
+**Motivo:** Sugestão aceita pelo usuário. Extração automática suficiente para o MVP.
+
+**Impacto:** Não adicionar novas heurísticas no MVP.
+
+**Status:** ativa.
+
+### 2026-06-07 — Sem limite de tamanho/páginas no PDF
+
+**Contexto:** PD-09 perguntava se o PDF deveria ter limite de tamanho ou páginas.
+
+**Decisao:** NÃO.
+
+**Motivo:** Decisão humana explícita.
+
+**Impacto:** Não implementar validação de limite de páginas ou tamanho do PDF gerado.
+
+**Status:** ativa.
+
 ## Decisoes iniciais deste framework
 
 ### 2026-05-28 - Planilha como mapa, Markdown como fonte dos prompts
