@@ -46,6 +46,7 @@ PRD de origem: `docs/product/PRD_v1.1.md`
 | Sprint | Nome | Objetivo | Impacto UI/UX | Arquivo |
 |---|---|---|---|---|
 | Sprint 0 | Preparação | Mapear codebase | Não aplicável | `SPRINT_00_PREPARACAO.md` (CONCLUÍDA) |
+| Sprint 00B | Fundação de testes | Configurar Vitest + RTL | Não aplicável | `SPRINT_00B_TESTES.md` |
 | Sprint 1 | Migração de dependências | Substituir CDNs por npm | Indireto | `SPRINT_01_MIGRACAO_DEPS.md` |
 | Sprint 2 | Sanitização e nome do PDF | DOMPurify + nome descritivo + importação | Indireto | `SPRINT_02_SANITIZACAO_NOME.md` |
 | Sprint 3 | Regras de negócio | `---` em code blocks, preview vazio, numeração | Sim | `SPRINT_03_REGRAS_NEGOCIO.md` |
@@ -57,7 +58,8 @@ PRD de origem: `docs/product/PRD_v1.1.md`
 ## 3. Ordem de execução recomendada
 
 1. **Sprint 0** (CONCLUÍDA) — Mapeamento da codebase. Git inicializado.
-2. **Sprint 1** — Migração de CDNs. Bloqueante para todas as outras sprints. Sem dependências npm locais, o build de produção falha.
+2. **Sprint 00B** — Fundação de testes. Configurar Vitest + RTL antes de implementar funcionalidades. Permite validar cada sprint com testes automatizados.
+3. **Sprint 1** — Migração de CDNs. Bloqueante para todas as outras sprints. Sem dependências npm locais, o build de produção falha.
 3. **Sprint 2** — Sanitização e nome do PDF. Depende de Sprint 1 (DOMPurify via npm). Implementa segurança (XSS) e regra de negócio (nome descritivo).
 4. **Sprint 3** — Regras de negócio. Depende de Sprint 1 (parser Markdown via npm). Corrige comportamento de `---` em code blocks.
 5. **Sprint 4** — UX e responsividade. Pode ser executada em paralelo com Sprint 3, mas é mais seguro fazer após.

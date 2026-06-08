@@ -23,6 +23,17 @@ Data: 2026-06-07
 
 ---
 
+### Sprint 00B — Fundação de testes
+
+| # | Tarefa | Arquivos | Coder econômico |
+|---|---|---|---|
+| 00B.1 | Instalar e configurar Vitest + RTL | `package.json`, `vite.config.ts` | Sim |
+| 00B.2 | Smoke test heurísticas | `utils/__tests__/heuristics.test.ts` | Sim |
+| 00B.3 | Smoke test constantes | `__tests__/styles.test.ts` | Sim |
+| 00B.4 | Documentar estratégia de testes | `docs/implementation/test-plan.md` | Sim |
+
+---
+
 ### Sprint 1 — Migração de dependências
 
 | # | Tarefa | Arquivos | Coder econômico |

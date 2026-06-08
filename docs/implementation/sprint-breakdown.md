@@ -11,6 +11,7 @@ Data: 2026-06-07
 | Sprint | Nome | Objetivo | Tarefas | Status |
 |---|---|---|---|---|
 | Sprint 0 | Preparação | Mapear codebase | 8 | CONCLUÍDA |
+| Sprint 00B | Fundação de testes | Configurar Vitest + RTL | 4 | Pendente |
 | Sprint 1 | Migração de dependências | Substituir CDNs por npm | 7 | Pendente |
 | Sprint 2 | Sanitização e nome do PDF | DOMPurify + nome descritivo + importação | 5 | Pendente |
 | Sprint 3 | Regras de negócio | `---` em code blocks, preview vazio, numeração | 4 | Pendente |
