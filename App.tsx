@@ -214,12 +214,37 @@ const App: React.FC = () => {
       }
       const reader = new FileReader();
       reader.onload = (event) => {
-        const content = event.target?.result;
+        let content = event.target?.result;
         if (typeof content === 'string') {
+          // Remove UTF-8 BOM if present
+          if (content.charCodeAt(0) === 0xFEFF) {
+            content = content.slice(1);
+          }
+          // Check for replacement character (U+FFFD) — encoding issue
+          if (content.includes('\uFFFD')) {
+            // Retry with Latin-1
+            const retryReader = new FileReader();
+            retryReader.onload = (retryEvent) => {
+              const retryContent = retryEvent.target?.result;
+              if (typeof retryContent === 'string') {
+                handleImportFile(retryContent, file.name);
+              }
+            };
+            retryReader.onerror = () => {
+              setImportNotification('Não foi possível ler o arquivo. Verifique o formato e tente novamente.');
+              setTimeout(() => setImportNotification(null), 5000);
+            };
+            retryReader.readAsText(file, 'ISO-8859-1');
+            return;
+          }
           handleImportFile(content, file.name);
         }
       };
-      reader.readAsText(file);
+      reader.onerror = () => {
+        setImportNotification('Não foi possível ler o arquivo. Verifique o formato e tente novamente.');
+        setTimeout(() => setImportNotification(null), 5000);
+      };
+      reader.readAsText(file, 'UTF-8');
     }
   };
 

@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 2026-06-08 — Sprint 3 concluída: regras de negócio
+
+### Resumo
+Sprint 3 (Regras de Negócio) concluída com sucesso (4/4 tarefas). `---` dentro de code blocks não cria mais quebra de página. Preview vazio mostra mensagem orientativa. Numeração de página exclui capa (1-based, centralizada). Encoding de importação com detecção de BOM e fallback Latin-1.
+
+### Arquivos afetados
+- `components/A4DocPreview.tsx` (proteção `---` code blocks, empty state, numeração de página)
+- `App.tsx` (encoding UTF-8/Latin-1 no drag-and-drop)
+- `components/Toolbar.tsx` (encoding UTF-8/Latin-1 no file picker)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Corrigir comportamentos de regra de negócio que afetam a experiência do usuário.
+
+### Evidência
+- `npx tsc --noEmit` → OK
+- `npm test` → 22 testes passando
+- `npm run build` → OK
+
+---
+
 ## 2026-06-08 — Sprint 2 concluída: sanitização, nome do PDF, validação 8MB e confirmação
 
 ### Resumo

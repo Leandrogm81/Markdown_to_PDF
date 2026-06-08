@@ -86,10 +86,33 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
   const sections = useMemo(() => {
     if (!markdownText) return [''];
     
-    // Split by horizontal rules
-    // Match line breaks with standard hyphens --- or ---- e.g., \n---\n or \n---\r\n
-    const parts = markdownText.split(/(?:\r?\n)+---+(?:\r?\n)+/);
-    return parts.map(part => part.trim());
+    // Protect --- inside code blocks (triple backtick) and <pre>/<code> blocks
+    const CODE_PLACEHOLDER = '\x00CODEBLOCK_PLACEHOLDER_';
+    const codeBlocks: string[] = [];
+    
+    let protected_text = markdownText;
+    
+    // 1. Protect triple-backtick code blocks
+    protected_text = protected_text.replace(/```[\s\S]*?```/g, (match) => {
+      const idx = codeBlocks.length;
+      codeBlocks.push(match);
+      return `${CODE_PLACEHOLDER}${idx}\x00`;
+    });
+    
+    // 2. Protect indented code blocks (4+ spaces or tab, consecutive lines)
+    // Not needed for basic --- detection — triple backtick covers most cases
+    
+    // 3. Now split by --- (only outside code blocks)
+    const parts = protected_text.split(/(?:\r?\n)+---+(?:\r?\n)+/);
+    
+    // 4. Restore code blocks
+    return parts.map(part => {
+      let restored = part;
+      codeBlocks.forEach((block, idx) => {
+        restored = restored.replace(`${CODE_PLACEHOLDER}${idx}\x00`, block);
+      });
+      return restored.trim();
+    });
   }, [markdownText]);
 
 // Convert each markdown section into HTML
@@ -506,8 +529,8 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
     return listPages;
   }, [parsedSections, layout, headerFooter, preset]);
 
-  // Total pages including cover page
-  const totalPages = allPages.length + (coverPage.enabled ? 1 : 0);
+  // Total pages (excluding cover page from count)
+  const totalPages = allPages.length;
 
   // A4 physical dimensions (Portrait: 210mm x 297mm, Landscape: 297mm x 210mm)
   // Letter physical dimensions (Portrait: 215.9mm x 279.4mm)
@@ -677,9 +700,35 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
       {/* Cover Page */}
       {renderCoverPage(scale)}
 
+      {/* Empty state message */}
+      {!markdownText?.trim() && !coverPage.enabled && (
+        <div style={{ width: `${expectedWidthPx * scale}px`, height: `${expectedHeightPx * scale}px`, position: 'relative', flexShrink: 0 }}>
+          <div
+            className="a4-page-node shadow-lg select-none relative flex flex-col items-center justify-center border border-slate-200 dark:border-slate-850 overflow-hidden"
+            style={{
+              ...pageStyles,
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+          >
+            <div className="flex flex-col items-center gap-3 px-8 text-center">
+              <svg className="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+              </svg>
+              <p className="text-sm text-slate-400 dark:text-slate-500">
+                Comece a digitar ou selecione um template
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Structured Content Pages */}
       {allPages.map(({ sectionIndex, htmlContent, isFirstInSection }, index) => {
-        const pageIdx = index + (coverPage.enabled ? 2 : 1);
+        const pageIdx = index + 1; // 1-based, cover excluded
         const pageId = `render-page-${pageIdx}`;
 
         const wrapperStyle: React.CSSProperties = {
@@ -735,10 +784,10 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
               {/* Footer banner */}
               {(headerFooter.showFooter || headerFooter.showPageNumbers) && (
                 <div 
-                  className="w-full text-[10px] text-slate-400 dark:text-slate-500 flex items-center justify-between border-t border-slate-100 pt-1.5 z-10 bg-transparent"
+                  className="w-full text-[10px] text-slate-400 dark:text-slate-500 flex items-center justify-center border-t border-slate-100 pt-1.5 z-10 bg-transparent relative"
                   style={{ padding: '0mm 12mm 8mm 12mm' }}
                 >
-                  <span>
+                  <span className="absolute left-0">
                     {headerFooter.showFooter ? (headerFooter.footerText || 'Criado no Elegant Markdown') : ''}
                   </span>
                   <span>

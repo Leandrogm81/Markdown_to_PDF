@@ -1,30 +1,19 @@
 # Current State
 
 ## Estado atual
-Sprint 2 concluída (5/5 tarefas feitas). Build OK, 22 testes OK, typecheck OK. Sprints 3-5 quebradas em tarefas mas não iniciadas.
+Sprint 3 concluída (4/4 tarefas feitas). Build OK, 22 testes OK, typecheck OK. Sprints 4-5 quebradas em tarefas mas não iniciadas.
 
 ## Última ação relevante
-Sprint 2 completa: DOMPurify sanitização implementada, nome do PDF descritivo, validação 8MB, confirmação antes de substituir conteúdo.
+Sprint 3 completa: `---` em code blocks não cria mais quebra de página, preview vazio com mensagem, numeração de página exclui capa, encoding UTF-8/Latin-1.
 
-## Sprint 2 — Progresso
-- ✅ Tarefa 2.1: DOMPurify instalado (dompurify + @types/dompurify)
-- ✅ Tarefa 2.2: Sanitização HTML com DOMPurify (whitelist configurada)
-- ✅ Tarefa 2.3: Nome do PDF descritivo (sanitizePdfName + getPdfFileName)
-- ✅ Tarefa 2.4: Validação de importação 8MB (App.tsx + Toolbar.tsx)
-- ✅ Tarefa 2.5: Confirmação antes de substituir conteúdo (modal)
-
-## Arquivos de tarefas
-- `docs/implementation/SPRINT_02_SANITIZACAO_NOME_TAREFAS.md` — 5 tarefas (concluída)
-- `docs/implementation/SPRINT_03_REGRAS_NEGOCIO_TAREFAS.md` — 4 tarefas
-- `docs/implementation/SPRINT_04_UX_RESPONSIVIDADE_TAREFAS.md` — 4 tarefas
-- `docs/implementation/SPRINT_05_DEPLOY_VALIDACAO_TAREFAS.md` — 5 tarefas
+## Sprint 3 — Progresso
+- ✅ Tarefa 3.1: `---` em code blocks corrigido (proteção com placeholder)
+- ✅ Tarefa 3.2: Preview vazio com mensagem orientativa
+- ✅ Tarefa 3.3: Numeração de página correta (exclui capa, 1-based, centralizada)
+- ✅ Tarefa 3.4: Encoding de importação (UTF-8 BOM + Latin-1 fallback)
 
 ## Pendências imediatas
-- Executar Sprint 3 (Regras de Negócio).
-
-## Riscos atuais
-- Chunk size warning no build (não bloqueante).
-- DOMPurify whitelist pode precisar de ajuste se HTML legítimo for removido.
+- Executar Sprint 4 (UX + Responsividade).
 
 ## Seguro rodar `/new`?
-Sim — Sprint 2 completa e commitada. Próximo agente deve iniciar Sprint 3.
+Sim — Sprint 3 completa e commitada. Próximo agente deve iniciar Sprint 4.
