@@ -24,7 +24,7 @@ interface ToolbarProps {
   onInsert: (before: string, after?: string) => void;
   onClear: () => void;
   onRestoreDefault: () => void;
-  onImportFile: (content: string) => void;
+  onImportFile: (content: string, fileName?: string) => void;
   charCount: number;
   wordCount: number;
   readTime: number;
@@ -143,11 +143,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
+                if (file.size > 8 * 1024 * 1024) {
+                  alert('Arquivo muito grande. O limite é 8MB.');
+                  e.target.value = '';
+                  return;
+                }
                 const reader = new FileReader();
                 reader.onload = (event) => {
                   const content = event.target?.result;
                   if (typeof content === 'string') {
-                    onImportFile(content);
+                    onImportFile(content, file.name);
                   }
                 };
                 reader.readAsText(file);

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { DocumentConfig, PresetType, MarginSize } from '../types';
 import { STYLE_PRESETS, MARGINS, FONT_SIZES, LINE_HEIGHTS } from '../styles';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 export const getCommonStyles = (selectorPrefix: string, alignmentSetting: string, activeHeadingColor: string) => {
   const alignmentCSS = alignmentSetting === 'justify' ? 'justify' : 'left';
@@ -96,7 +97,11 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
     return sections.map((section) => {
       if (typeof marked !== 'undefined') {
         try {
-          return marked.parse(section) as string;
+          return DOMPurify.sanitize(marked.parse(section) as string, {
+            ALLOWED_TAGS: ['strong', 'em', 'br', 'p', 'div', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'img', 'hr'],
+            ALLOWED_ATTR: ['class', 'id', 'href', 'src', 'alt', 'title', 'colspan', 'rowspan', 'align', 'type', 'checked', 'disabled'],
+            ALLOW_DATA_ATTR: false,
+          });
         } catch (e) {
           console.error("Erro ao processar markdown", e);
           return `<p>Erro ao formatar bloco: ${section}</p>`;

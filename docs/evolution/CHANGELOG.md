@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 2026-06-08 — Sprint 2 concluída: sanitização, nome do PDF, validação 8MB e confirmação
+
+### Resumo
+Sprint 2 (Sanitização e Nome do PDF) concluída com sucesso (5/5 tarefas). DOMPurify implementado com whitelist de tags/atributos. Nome do PDF segue sequência de sanitização do PRD seção 7.10. Validação de importação 8MB em drag-and-drop e file picker. Modal de confirmação antes de substituir conteúdo.
+
+### Arquivos afetados
+- `components/A4DocPreview.tsx` (DOMPurify import + sanitize após marked.parse)
+- `App.tsx` (sanitizePdfName, getPdfFileName, validação 8MB, modal confirmação, importedFileName state)
+- `components/Toolbar.tsx` (interface onImportFile atualizada, validação 8MB, passa fileName)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/next-actions.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Tornar o app seguro contra XSS via HTML no Markdown, gerar PDFs com nomes descritivos, proteger contra importação de arquivos grandes e evitar perda acidental de conteúdo.
+
+### Evidência
+- `npx tsc --noEmit` → OK
+- `npm test` → 22 testes passando
+- `npm run build` → OK
+
+---
+
 ## 2026-06-08 — Sprint 1 concluída: migração de CDNs completa
 
 ### Resumo

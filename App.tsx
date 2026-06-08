@@ -31,6 +31,51 @@ import { extractHeuristics } from './utils/heuristics';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
+// PRD seção 7.10: sequência de sanitização do nome do PDF
+const sanitizePdfName = (rawName: string): string => {
+  let name = rawName
+    .normalize('NFD')                    // 1. NFD decomposition
+    .replace(/[\u0300-\u036f]/g, '')     // 2. Remove diacritics
+    .toLowerCase()                       // 3. Lowercase
+    .replace(/[\s_]+/g, '-')             // 4. Spaces/underscores → hyphens
+    .replace(/[^a-z0-9-]/g, '')          // 5. Remove non-alphanumeric (keep hyphens)
+    .replace(/-{2,}/g, '-')              // 6. Collapse multiple hyphens
+    .replace(/^-|-$/g, '')               // 7. Remove leading/trailing hyphens
+    .slice(0, 80);                       // 8. Limit to 80 chars
+
+  return name || 'documento';            // 9. Fallback
+};
+
+// PRD seção 7.10: prioridade de escolha do nome
+const getPdfFileName = (config: DocumentConfig, markdownText: string, importedFileName?: string): string => {
+  let rawName = '';
+
+  // Priority 1: cover page title (if cover enabled and title filled)
+  if (config.coverPage.enabled && config.coverPage.title?.trim()) {
+    rawName = config.coverPage.title.trim();
+  }
+
+  // Priority 2: first heading # in markdown
+  if (!rawName) {
+    const headingMatch = markdownText.match(/^#\s+(.+)$/m);
+    if (headingMatch) {
+      rawName = headingMatch[1].trim();
+    }
+  }
+
+  // Priority 3: imported file name
+  if (!rawName && importedFileName) {
+    rawName = importedFileName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+  }
+
+  // Priority 4: first 50 chars of content
+  if (!rawName) {
+    rawName = markdownText.trim().slice(0, 50);
+  }
+
+  return sanitizePdfName(rawName) + '.pdf';
+};
+
 const DEFAULT_CONFIG: DocumentConfig = {
   coverPage: {
     enabled: true,
@@ -76,6 +121,9 @@ const App: React.FC = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [importNotification, setImportNotification] = useState<string | null>(null);
   const [overriddenFields, setOverriddenFields] = useState<Record<string, boolean>>({});
+  const [importedFileName, setImportedFileName] = useState<string | undefined>(undefined);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
   const handleToggleOverride = (field: string) => {
     setOverriddenFields(prev => {
@@ -100,29 +148,38 @@ const App: React.FC = () => {
   };
 
   const handleImportFile = (content: string, fileName?: string) => {
-    setMarkdownText(content);
-    setSelectedTemplateId('');
-    setOverriddenFields({}); // Reset manual triggers so heuristic parsing syncs fully!
-    
-    if (fileName) {
-      const cleanName = fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-      if (cleanName) {
-        setConfig(prev => ({
-          ...prev,
-          coverPage: {
-            ...prev.coverPage,
-            title: cleanName.charAt(0).toUpperCase() + cleanName.slice(1)
-          }
-        }));
-        // Mark title as overridden if customized from filename
-        handleSetOverride('title', true);
+    const doImport = () => {
+      setMarkdownText(content);
+      setSelectedTemplateId('');
+      setOverriddenFields({});
+      setImportedFileName(fileName);
+      
+      if (fileName) {
+        const cleanName = fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+        if (cleanName) {
+          setConfig(prev => ({
+            ...prev,
+            coverPage: {
+              ...prev.coverPage,
+              title: cleanName.charAt(0).toUpperCase() + cleanName.slice(1)
+            }
+          }));
+          handleSetOverride('title', true);
+        }
       }
-    }
 
-    setImportNotification("Arquivo carregado com sucesso!");
-    setTimeout(() => {
-      setImportNotification(null);
-    }, 4000);
+      setImportNotification("Arquivo carregado com sucesso!");
+      setTimeout(() => {
+        setImportNotification(null);
+      }, 4000);
+    };
+
+    if (markdownText.trim().length > 0) {
+      setPendingAction(() => doImport);
+      setShowConfirmModal(true);
+    } else {
+      doImport();
+    }
   };
 
   const handleDragEnter = (e: React.DragEvent) => {
@@ -150,6 +207,11 @@ const App: React.FC = () => {
 
     const file = e.dataTransfer.files?.[0];
     if (file) {
+      if (file.size > 8 * 1024 * 1024) {
+        setImportNotification('Arquivo muito grande. O limite é 8MB.');
+        setTimeout(() => setImportNotification(null), 5000);
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         const content = event.target?.result;
@@ -200,17 +262,27 @@ const App: React.FC = () => {
   // Change of templates
   const handleSelectTemplate = (templateId: string) => {
     const found = TEMPLATES.find(t => t.id === templateId);
-    if (found) {
+    if (!found) return;
+
+    const doSwitch = () => {
       setMarkdownText(found.markdown);
       setSelectedTemplateId(templateId);
-      setOverriddenFields({}); // Reset manual triggers on template shift
+      setOverriddenFields({});
+      setImportedFileName(undefined);
       if (found.recommendedConfig) {
         setConfig(prev => ({
           ...prev,
           ...found.recommendedConfig,
-          editorTheme: prev.editorTheme // Keep prefered editorTheme
+          editorTheme: prev.editorTheme
         }));
       }
+    };
+
+    if (markdownText.trim().length > 0) {
+      setPendingAction(() => doSwitch);
+      setShowConfirmModal(true);
+    } else {
+      doSwitch();
     }
   };
 
@@ -275,11 +347,7 @@ const App: React.FC = () => {
         pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       }
 
-      const documentTitle = config.coverPage.enabled 
-        ? config.coverPage.title 
-        : 'documento-markdown';
-      
-      const fileName = `${documentTitle.toLowerCase().trim().replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+      const fileName = getPdfFileName(config, markdownText, importedFileName);
       pdf.save(fileName);
 
       // Successfully finish down flow
@@ -637,6 +705,45 @@ const App: React.FC = () => {
                 className="px-4 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs rounded-lg hover:brightness-110 shadow"
               >
                 Entendi! Começar a Forjar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-sm w-full overflow-hidden">
+            <div className="p-5">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">
+                Substituir conteúdo?
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                O conteúdo atual será perdido. Deseja continuar?
+              </p>
+            </div>
+            <div className="flex gap-2 p-4 pt-0">
+              <button
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setPendingAction(null);
+                }}
+                className="flex-1 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  if (pendingAction) {
+                    pendingAction();
+                    setPendingAction(null);
+                  }
+                }}
+                className="flex-1 px-4 py-2 text-sm font-bold text-white bg-rose-600 rounded-lg hover:bg-rose-700 transition-colors"
+              >
+                Substituir
               </button>
             </div>
           </div>
