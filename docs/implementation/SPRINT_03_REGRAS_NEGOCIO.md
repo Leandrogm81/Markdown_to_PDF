@@ -1,37 +1,45 @@
-# Sprint 3 — Correções de regra de negócio
+# Sprint 3 — Regras de Negócio
+
+Status: PENDENTE
+Depende de: Sprint 1
+
+---
 
 ## Objetivo
 
-Corrigir comportamentos de regra de negócio definidos no PRD v1.1: `---` em code blocks, numeração de página (capa não contada), preview com conteúdo vazio e definição explícita de "sessão".
+Corrigir comportamento de `---` dentro de code blocks (não deve criar quebra de página), implementar preview com conteúdo vazio (mensagem orientativa), implementar numeração de página correta (capa não contada) e definir encoding de importação.
 
 ---
 
 ## Impacto UI/UX
 
-**Classificação:** Sim.
+**Classificação:** Sim
 
-Esta sprint altera o comportamento visível do preview (numeração, estado vazio, quebra de página).
+- Preview vazio mostra mensagem orientativa → componente visual.
+- Numeração de página visível no rodapé → componente visual.
+- `---` em code blocks afeta paginação → impacto visual indireto.
 
-- Deve seguir `docs/design/UI_UX_GUIDE.md`.
-- Deve validar mobile e desktop.
-- Deve verificar estados visuais (vazio, numeração).
-- Deve evitar aparência genérica de IA.
+- Deve seguir `/docs/design/UI_UX_GUIDE.md` para mensagem de preview vazio.
+- Deve validar que a mensagem de preview vazio não parece genérica de IA.
+- Deve validar numeração em mobile e desktop.
 
 ---
 
 ## Escopo da sprint
 
-- Corrigir parser de `---` para ignorar dentro de code blocks e HTML.
-- Corrigir numeração de página: capa não contada, centro do rodapé.
-- Implementar estado vazio do preview com mensagem orientativa.
-- Definir "sessão" como aba aberta; configurações resetam no reload.
+1. Corrigir `---` em code blocks (não criar quebra de página).
+2. Implementar preview vazio com mensagem orientativa.
+3. Implementar numeração de página (capa não contada, centro do rodapé).
+4. Definir encoding de importação (UTF-8 BOM, fallback Latin-1).
+
+---
 
 ## Fora do escopo
 
-- Alterar templates.
-- Alterar configurações visuais além do que já existe.
-- Implementar autosave (PD-01 pendente).
-- Alterar exportação PDF.
+- Não alterar templates, presets ou temas.
+- Não alterar lógica de sanitização.
+- Não alterar nome do PDF.
+- Não alterar responsividade.
 
 ---
 
@@ -39,11 +47,9 @@ Esta sprint altera o comportamento visível do preview (numeração, estado vazi
 
 | Arquivo | Ação | Observação |
 |---|---|---|
-| Lógica de paginação | Alterar | `---` em code blocks |
-| Componente de preview | Alterar | Numeração, estado vazio |
-| Estado global/contexto | Alterar | Definição de sessão |
-
-**Nota:** Caminhos são prováveis. Confirmar após Sprint 0.
+| `A4DocPreview.tsx` | Alterar | `---` em code blocks, preview vazio, numeração |
+| `App.tsx` | Alterar | Encoding de importação |
+| `Toolbar.tsx` | Alterar | Encoding de importação |
 
 ---
 
@@ -51,161 +57,137 @@ Esta sprint altera o comportamento visível do preview (numeração, estado vazi
 
 ### Tarefa 3.1 — Corrigir `---` em code blocks
 
-**Descrição:** Modificar a lógica de detecção de `---` para ignorar quando dentro de bloco de código (``` ``` ```) ou HTML (`<pre>`, `<code>`).
+**Descrição:**
+No parser de Markdown (A4DocPreview.tsx), antes de dividir por `---`, verificar se o `---` está dentro de um bloco de código (`` ``` ``) ou HTML (`<pre>`, `<code>`). Se estiver, NÃO criar quebra de página.
 
-**Impacto UI/UX:** Sim — altera comportamento do preview.
+**Impacto UI/UX:** Indireto — afeta paginação.
 
 **Arquivos prováveis:**
-- Lógica de paginação/parser
+- `A4DocPreview.tsx`
 
 **Critério de aceite:**
-- `---` isolado na linha cria quebra de página.
-- `---` dentro de ``` ``` ``` NÃO cria quebra de página.
-- `---` dentro de `<pre>` ou `<code>` NÃO cria quebra de página.
-- `---` com espaços antes/depois NÃO cria quebra de página.
+- `---` isolado em linha vazia → cria quebra de página.
+- `---` dentro de bloco de código → NÃO cria quebra.
+- `---` dentro de `<pre>` ou `<code>` → NÃO cria quebra.
 
 **Validação:**
-- Criar Markdown com `---` em cada cenário e verificar preview.
-- Testar com documento que tem code blocks e `---` dentro deles.
+- Inserir `---` dentro de bloco de código → verificar que não quebra.
+- Inserir `---` isolado → verificar que quebra.
 
 **Riscos:**
-- Parser pode não distinguir contexto corretamente.
-- Pode quebrar quebras de página existentes.
-
-**O que NÃO alterar:**
-- Não alterar o parser Markdown (marked).
-- Não alterar a lógica de captura do preview.
+- Parser Markdown pode não distinguir corretamente contextos.
 
 ---
 
-### Tarefa 3.2 — Corrigir numeração de página
+### Tarefa 3.2 — Preview vazio com mensagem orientativa
 
-**Descrição:** Garantir que a numeração "Página X de Y" começa em 1 na primeira página do corpo (capa não é contada). Posição: centro do rodapé.
+**Descrição:**
+Quando o editor estiver vazio, o preview deve mostrar uma página A4 em branco com texto centralizado e sutil: "Comece a digitar ou selecione um template".
 
-**Impacto UI/UX:** Sim — altera visual do preview e PDF.
-
-**Arquivos prováveis:**
-- Componente de preview
-- Lógica de numeração
-
-**Critério de aceite:**
-- Com capa habilitada: numeração começa em 1 no corpo.
-- Sem capa: numeração começa em 1 na primeira página.
-- Numeração mostra "Página X de Y" no centro do rodapé.
-- Quebras manuais (`---`) incrementam normalmente.
-
-**Validação:**
-- Habilitar capa → verificar que numeração começa em 1 no corpo.
-- Desabilitar capa → verificar que numeração começa em 1.
-- Inserir `---` → verificar que número incrementa.
-
-**Riscos:** Nenhum significativo.
-
-**O que NÃO alterar:**
-- Não alterar layout do rodapé além da numeração.
-
----
-
-### Tarefa 3.3 — Implementar preview vazio
-
-**Descrição:** Quando o editor estiver vazio, mostrar no preview uma página A4 em branco com texto centralizado e sutil: "Comece a digitar ou selecione um template".
-
-**Impacto UI/UX:** Sim — novo estado visual.
+**Impacto UI/UX:** Sim — componente visual.
 
 **Arquivos prováveis:**
-- Componente de preview
+- `A4DocPreview.tsx`
 
 **Critério de aceite:**
 - Editor vazio → preview mostra página A4 em branco com mensagem.
-- Mensagem é centralizada e sutil (não domina a tela).
-- Quando conteúdo é digitado, mensagem desaparece e preview renderiza.
+- Mensagem é sutil (não domina a tela).
+- Mensagem desaparece quando conteúdo é digitado.
 
 **Validação:**
 - Limpar editor → verificar mensagem.
-- Digitar texto → verificar que mensagem desaparece.
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:**
-- Não alterar o template padrão que carrega ao abrir.
+- Digitar algo → verificar que mensagem desaparece.
 
 ---
 
-### Tarefa 3.4 — Definir "sessão" explicitamente
+### Tarefa 3.3 — Numeração de página
 
-**Descrição:** Garantir que configurações visuais são mantidas em memória enquanto a aba está aberta, e que recarregar a página restaura configurações padrão.
+**Descrição:**
+Implementar numeração "Página X de Y" no centro do rodapé de cada página do corpo. Capa NÃO é contada. Numeração começa em 1 na primeira página do corpo. Quebras manuais (`---`) incrementam normalmente.
 
-**Impacto UI/UX:** Sim — comportamento de reload.
+**Impacto UI/UX:** Sim — componente visual no rodapé.
 
 **Arquivos prováveis:**
-- Estado global/contexto de configurações
+- `A4DocPreview.tsx`
 
 **Critério de aceite:**
-- Alterar configuração → recarregar página → configuração volta ao padrão.
-- Conteúdo do editor volta ao template padrão no reload.
+- Numeração aparece no rodapé quando habilitada.
+- Capa não é contada.
+- X começa em 1 no corpo.
+- "Página X de Y" no centro do rodapé.
 
 **Validação:**
-- Alterar preset → F5 → verificar que voltou ao padrão.
-- Digitar conteúdo → F5 → verificar que voltou ao template.
+- Documento com capa → verificar numeração.
+- Documento sem capa → verificar numeração.
 
-**Riscos:** Nenhum.
+---
 
-**O que NÃO alterar:**
-- Não implementar autosave (PD-01 pendente).
+### Tarefa 3.4 — Encoding de importação
+
+**Descrição:**
+Definir encoding de importação: UTF-8 (com ou sem BOM). Se UTF-8 falhar ou tiver caracteres de substituição (U+FFFD), tentar Latin-1 como fallback. Se ambos falharem, mostrar mensagem de erro.
+
+**Impacto UI/UX:** Não — afeta apenas importação.
+
+**Arquivos prováveis:**
+- `App.tsx`
+- `Toolbar.tsx`
+
+**Critério de aceite:**
+- Arquivo UTF-8 com BOM → importado corretamente.
+- Arquivo Latin-1 → importado com fallback.
+- Arquivo com encoding inválido → mensagem de erro.
+
+**Validação:**
+- Importar arquivo com BOM → verificar conteúdo.
+- Importar arquivo Latin-1 → verificar conteúdo.
 
 ---
 
 ## Comandos de validação da sprint
 
 ```bash
-# Build
+npx tsc --noEmit
 npm run build
-
-# Preview local
-npm run preview
+npm run dev
 ```
 
 ---
 
 ## Testes necessários
 
-- **Testes manuais:** `---` em code blocks, numeração, preview vazio, reload.
-- **Testes de regressão:** Exportação PDF continua funcionando.
-
----
-
-## Fluxo manual de validação
-
-1. Abrir app.
-2. Limpar editor → verificar preview vazio com mensagem.
-3. Digitar conteúdo com code block contendo `---` → verificar que NÃO cria quebra.
-4. Inserir `---` isolado → verificar que cria quebra.
-5. Habilitar capa → verificar numeração começa em 1 no corpo.
-6. Alterar configuração → F5 → verificar que voltou ao padrão.
-7. Exportar PDF → verificar que numeração está correta no PDF.
+- [ ] `---` em code block não cria quebra.
+- [ ] `---` isolado cria quebra.
+- [ ] Preview vazio mostra mensagem.
+- [ ] Numeração correta com capa.
+- [ ] Numeração correta sem capa.
+- [ ] Encoding UTF-8 BOM funciona.
+- [ ] Encoding Latin-1 funciona.
+- [ ] Build funciona.
 
 ---
 
 ## Riscos da sprint
 
-- Correção de `---` em code blocks pode ser complexa dependendo do parser.
-- Numeração pode ter edge cases com capas e quebras manuais.
+- **MÉDIO:** Detectar `---` em code blocks pode ser complexo.
+- **BAIXO:** Numeração pode ter off-by-one com capa.
 
 ---
 
 ## Critérios finais de aceite da sprint
 
-- [ ] `---` em code block não cria quebra de página.
-- [ ] Numeração começa em 1 no corpo (capa não contada).
+- [ ] `---` em code block não cria quebra.
 - [ ] Preview vazio mostra mensagem orientativa.
-- [ ] Recarregar restaura configurações padrão.
-- [ ] Build completa sem erros.
+- [ ] Numeração começa em 1 no corpo.
+- [ ] Capa não é contada na numeração.
+- [ ] Encoding funciona corretamente.
+- [ ] Build e typecheck passam.
 
 ---
 
 ## O que NÃO deve ser alterado nesta sprint
 
-- Templates.
-- Exportação PDF (além da numeração).
-- Configurações visuais disponíveis.
-- Responsividade.
+- Não alterar templates, presets ou temas.
+- Não alterar sanitização.
+- Não alterar nome do PDF.
+- Não alterar responsividade.

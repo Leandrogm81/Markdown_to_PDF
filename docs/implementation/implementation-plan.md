@@ -1,47 +1,43 @@
 # Plano de Implementação
 
-**Projeto:** Markdown para PDF
-**PRD de origem:** `docs/product/PRD_v1.1.md`
-**Data:** 2026-06-07
-**Status:** Pronto para execução
+Projeto: `/mnt/c/Dev/markdown-para-pdf`
+Versão: 2.0 (atualizado com PDs resolvidos)
+Data: 2026-06-07
+PRD de origem: `docs/product/PRD_v1.1.md`
 
 ---
 
 ## 1. Premissas
 
-### Decisões assumidas com base no PRD
+### Decisões assumidas (PDs resolvidos)
 
-- O projeto já é um protótipo funcional com Vite + React + TypeScript.
-- As CDNs (Tailwind, marked, jspdf, html2canvas) devem ser substituídas por dependências npm.
-- A GEMINI_API_KEY deve ser removida do código e configuração.
-- Os templates existentes em `templates.ts` serão usados sem alteração (PD-07 recomendação).
-- A sanitização de HTML será implementada com DOMPurify (PD-10 recomendação).
-- O autosave NÃO entra no MVP (PD-01 pendente — aguarda decisão humana).
-- O tema do editor (claro/escuro) NÃO entra no MVP (PD-11 pendente — aguarda decisão humana).
-- A confirmação antes de substituir conteúdo (PD-04) será implementada como padrão (melhor UX).
-- O tamanho máximo de arquivo importado (PD-03) será definido como 1MB como padrão seguro.
-- O limite de páginas do PDF (PD-09) será definido como 50 páginas como padrão seguro.
+| PD | Decisão | Fonte |
+|---|---|---|
+| PD-01 | Autosave NÃO no MVP | Decisão humana 2026-06-07 |
+| PD-02 | Fidelidade: resolução mínima (mesma página, margens, texto, fontes) | PRD v1.1 |
+| PD-03 | Tamanho máximo importação: 8MB | Decisão humana 2026-06-07 |
+| PD-04 | Confirmação antes de substituir: SIM | Decisão humana 2026-06-07 |
+| PD-05 | Manter 5 presets existentes | Sugestão aceita 2026-06-07 |
+| PD-06 | Manter 4 temas de capa existentes | Sugestão aceita 2026-06-07 |
+| PD-07 | Manter 4 templates existentes | Sugestão aceita 2026-06-07 |
+| PD-08 | Manter 7 heurísticas existentes | Sugestão aceita 2026-06-07 |
+| PD-09 | Sem limite de tamanho/páginas do PDF | Decisão humana 2026-06-07 |
+| PD-10 | DOMPurify como sanitização | Sugestão aceita 2026-06-07 |
+| PD-11 | Sem tema escuro no MVP | Decisão humana 2026-06-07 |
 
-### O que foi inferido (precisa confirmação)
+### O que foi inferido
 
-- PD-05 (presets de estilo): usar os existentes no código.
-- PD-06 (temas de capa): usar os existentes no código.
-- PD-08 (heurísticas além de título/subtítulo): implementar apenas título e subtítulo no MVP.
+- O projeto é Vite + React 19 + TypeScript, sem backend.
+- Source files estão no root (App.tsx, index.tsx, components/, templates.ts).
+- Git já inicializado (commit 9eedf50).
+- Sprint 0 (mapeamento) já concluída.
 
-### Limites do PRD respeitados
+### O que NÃO deve ser expandido
 
-- Não será implementada nenhuma funcionalidade fora do escopo do MVP.
-- Não será alterada a arquitetura existente (estabilização, não redesenho).
-- Componentes grandes serão mantidos intactos salvo correção de bug.
-- Toda decisão visual seguirá `docs/design/UI_UX_GUIDE.md`.
-
-### Pontos que NÃO devem ser expandidos sem autorização
-
-- Não criar novos templates além dos existentes.
-- Não adicionar presets de estilo além dos existentes.
-- Não implementar upload de imagem (apenas URL).
-- Não adicionar analytics ou error tracking.
-- Não implementar autosave (salvo decisão PD-01).
+- Não criar novos templates, presets ou temas de capa.
+- Não adicionar autosave.
+- Não adicionar tema escuro.
+- Não implementar login, contas ou persistência server-side.
 
 ---
 
@@ -49,64 +45,50 @@
 
 | Sprint | Nome | Objetivo | Impacto UI/UX | Arquivo |
 |---|---|---|---|---|
-| Sprint 0 | Preparação e auditoria | Mapear codebase, validar dependências, Git | Não aplicável | `SPRINT_00_PREPARACAO.md` |
-| Sprint 1 | Migração de dependências CDN para npm | Substituir CDNs, remover GEMINI_API_KEY, configurar Tailwind npm | Indireto | `SPRINT_01_MIGRACAO_DEPS.md` |
-| Sprint 2 | Sanitização HTML e nome do PDF | Implementar DOMPurify, nome descritivo do PDF, encoding de importação | Não | `SPRINT_02_SANITIZACAO_NOME.md` |
-| Sprint 3 | Correções de regra de negócio | `---` em code blocks, numeração de página, preview vazio, sessão | Sim | `SPRINT_03_REGRAS_NEGOCIO.md` |
-| Sprint 4 | UX e responsividade | Loading/exportação, notificações, mobile, toolbar 44px | Sim | `SPRINT_04_UX_RESPONSIVIDADE.md` |
-| Sprint 5 | Deploy Vercel e validação final | Config Vercel, meta tags, testes manuais, checklist final | Indireto | `SPRINT_05_DEPLOY_VALIDACAO.md` |
+| Sprint 0 | Preparação | Mapear codebase | Não aplicável | `SPRINT_00_PREPARACAO.md` (CONCLUÍDA) |
+| Sprint 1 | Migração de dependências | Substituir CDNs por npm | Indireto | `SPRINT_01_MIGRACAO_DEPS.md` |
+| Sprint 2 | Sanitização e nome do PDF | DOMPurify + nome descritivo + importação | Indireto | `SPRINT_02_SANITIZACAO_NOME.md` |
+| Sprint 3 | Regras de negócio | `---` em code blocks, preview vazio, numeração | Sim | `SPRINT_03_REGRAS_NEGOCIO.md` |
+| Sprint 4 | UX e responsividade | Mobile, notificações, confirmação | Sim | `SPRINT_04_UX_RESPONSIVIDADE.md` |
+| Sprint 5 | Deploy e validação | Vercel, meta tags, checklist final | Indireto | `SPRINT_05_DEPLOY_VALIDACAO.md` |
 
 ---
 
 ## 3. Ordem de execução recomendada
 
-### Por que a Sprint 0 vem antes
+1. **Sprint 0** (CONCLUÍDA) — Mapeamento da codebase. Git inicializado.
+2. **Sprint 1** — Migração de CDNs. Bloqueante para todas as outras sprints. Sem dependências npm locais, o build de produção falha.
+3. **Sprint 2** — Sanitização e nome do PDF. Depende de Sprint 1 (DOMPurify via npm). Implementa segurança (XSS) e regra de negócio (nome descritivo).
+4. **Sprint 3** — Regras de negócio. Depende de Sprint 1 (parser Markdown via npm). Corrige comportamento de `---` em code blocks.
+5. **Sprint 4** — UX e responsividade. Pode ser executada em paralelo com Sprint 3, mas é mais seguro fazer após.
+6. **Sprint 5** — Deploy. Depende de todas as anteriores. Última sprint.
 
-A Sprint 0 é obrigatória para mapear a codebase real antes de qualquer alteração. Sem ela, o agente pode inventar caminhos, sobrescrever arquivos errados ou quebrar funcionalidades existentes.
+### Dependências
 
-### Dependências entre sprints
-
-- Sprint 0 → independente (deve ser executada primeiro).
-- Sprint 1 → depende de Sprint 0 (precisa conhecer a estrutura real).
-- Sprint 2 → depende de Sprint 1 (precisa de DOMPurify instalado como npm).
-- Sprint 3 → depende de Sprint 1 (precisa de build funcionando com npm).
-- Sprint 4 → pode ser parcialmente paralela com Sprint 3, mas é mais segura sequencial.
-- Sprint 5 → depende de todas as anteriores.
-
-### Sprints validáveis isoladamente
-
-- Sprint 0: validável apenas com leitura.
-- Sprint 1: validável com `npm run build` + verificação de ausência de CDNs.
-- Sprint 2: validável com teste manual de sanitização e nome do PDF.
-- Sprint 3: validável com teste manual de `---` em code blocks e numeração.
-- Sprint 4: validável com teste manual em mobile e desktop.
-- Sprint 5: validável com deploy na Vercel.
-
-### Sprints que NÃO devem ser iniciadas antes da anterior
-
-- Sprint 2 não deve começar antes de Sprint 1 validada (DOMPurify precisa estar instalado).
-- Sprint 5 não deve começar antes de Sprint 4 validada (deploy deve incluir todas as correções).
+- Sprint 1 é pré-requisito de todas as outras.
+- Sprint 2 depende de Sprint 1 (DOMPurify npm).
+- Sprint 3 depende de Sprint 1 (marked npm).
+- Sprint 4 pode rodar após Sprint 1, mas é mais seguro após Sprint 3.
+- Sprint 5 é a última.
 
 ---
 
 ## 4. Checklist de validação geral
 
-Para cada sprint, verificar:
+Para cada sprint:
 
-- [ ] `npm run build` sem erros.
+- [ ] `npm run dev` funciona sem erro no console.
+- [ ] `npm run build` gera `dist/` sem erro.
+- [ ] Preview renderiza corretamente.
+- [ ] PDF exporta com sucesso.
+- [ ] Não há erros de tipo TypeScript.
 - [ ] Não há CDNs no `index.html` (após Sprint 1).
-- [ ] GEMINI_API_KEY não está no bundle de produção (após Sprint 1).
-- [ ] HTML `<script>` não é executado no preview (após Sprint 2).
-- [ ] Nome do PDF não é genérico (após Sprint 2).
-- [ ] `---` em code block não cria quebra de página (após Sprint 3).
-- [ ] Numeração começa em 1 no corpo, capa não contada (após Sprint 3).
-- [ ] Preview vazio mostra mensagem orientativa (após Sprint 3).
-- [ ] Botão de exportar mostra spinner e fica desabilitado (após Sprint 4).
-- [ ] App funciona em mobile 320px sem scroll horizontal (após Sprint 4).
-- [ ] Não há erros no console do navegador.
-- [ ] Verificação contra `docs/design/UI_UX_GUIDE.md` em sprints com impacto visual.
-- [ ] Verificação de arquivos alterados (não saiu do escopo).
-- [ ] Verificação de variáveis de ambiente (nenhum segredo exposto).
+- [ ] GEMINI_API_KEY não está exposta (após Sprint 1).
+- [ ] `.env` está no `.gitignore`.
+- [ ] Funcionalidades existentes não foram quebradas.
+- [ ] Mobile funciona em 320px (após Sprint 4).
+- [ ] `---` em code block não cria quebra (após Sprint 3).
+- [ ] HTML `<script>` não é executado (após Sprint 2).
 
 ---
 
@@ -114,18 +96,24 @@ Para cada sprint, verificar:
 
 | Tarefa | Motivo |
 |---|---|
-| Migração de CDNs para npm (Sprint 1) | Alteração de build config; pode quebrar todo o app se incorreta |
-| Sanitização de HTML com DOMPurify (Sprint 2) | Segurança; configuração incorreta pode deixar XSS ou quebrar conteúdo |
-| Configuração Vercel (Sprint 5) | Deploy; configuração incorreta pode impedir acesso em produção |
-| Remoção de GEMINI_API_KEY (Sprint 1) | Segurança; precisa garantir que não há referências residuais |
+| Migração Tailwind CDN → npm | Alteração arquitetural sensível; pode quebrar todas as classes |
+| Habilitar `strict: true` | Pode revelar dezenas de erros de tipo |
+| Sanitização DOMPurify | Segurança; configuração errada = XSS |
+| Deploy Vercel | Configuração de build, redirects, meta tags |
+
+Tarefas seguras para coder econômico:
+- Alterar nome do PDF (sequência clara no PRD).
+- Adicionar validação de tamanho de importação.
+- Adicionar confirmação antes de substituir conteúdo.
+- Corrigir preview vazio.
+- Adicionar numeração de página.
 
 ---
 
 ## 6. Observações finais
 
-- **Escopo:** Este plano cobre apenas o MVP definido no PRD v1.1. Não inclui autosave, tema do editor, upload de imagem, error tracking ou qualquer item listado como "Fora de escopo".
-- **Arquitetura:** O plano preserva a arquitetura existente (Vite + React + TypeScript). Não altera a estrutura de componentes, apenas estabiliza e corrige.
-- **Riscos:** O maior risco é a migração de CDNs para npm (Sprint 1). Se o build quebrar, todas as sprints subsequentes são afetadas.
-- **UI/UX:** Toda sprint com impacto visual (Sprints 3, 4, 5) DEVE seguir `docs/design/UI_UX_GUIDE.md`.
-- **PDs pendentes:** PD-01 (autosave), PD-07 (templates), PD-10 (DOMPurify) e PD-11 (tema) exigem decisão humana antes ou durante a execução.
-- **GEMINI_API_KEY:** A remoção é obrigatória. Se o usuário quiser manter, deve documentar o motivo.
+- O PRD v1.1 é a fonte de verdade. Não inventar funcionalidades.
+- `docs/design/UI_UX_GUIDE.md` é obrigatório para toda decisão visual.
+- Componentes grandes (App.tsx 666 linhas, A4DocPreview.tsx 757 linhas) devem ser mantidos intactos salvo correção de bug.
+- Toda sprint deve deixar o projeto funcional.
+- Git commits a cada sprint concluída.

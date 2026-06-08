@@ -1,32 +1,45 @@
-# Sprint 2 — Sanitização HTML e nome descritivo do PDF
+# Sprint 2 — Sanitização e Nome do PDF
+
+Status: PENDENTE
+Depende de: Sprint 1
+
+---
 
 ## Objetivo
 
-Implementar sanitização de HTML no Markdown com DOMPurify, implementar a sequência de sanitização do nome do PDF e tratar encoding de importação de arquivos.
+Implementar sanitização de HTML com DOMPurify, corrigir o nome do arquivo PDF para seguir a sequência de sanitização definida no PRD, implementar validação de tamanho de importação (8MB) e confirmação antes de substituir conteúdo.
 
 ---
 
 ## Impacto UI/UX
 
-**Classificação:** Não.
+**Classificação:** Indireto
 
-Esta sprint altera lógica de processamento (sanitização, nome do arquivo, encoding), não telas ou componentes visuais. O visual permanece idêntico.
+- Sanitização afeta a renderização de HTML no preview (pode remover tags legítimas se whitelist for muito restritiva).
+- Nome do PDF afeta o arquivo baixado (não visual).
+- Validação de importação afeta UX de importação (mensagem de erro).
+- Confirmação antes de substituir afeta UX de troca de template (modal).
+
+- Deve seguir `/docs/design/UI_UX_GUIDE.md` para o modal de confirmação.
+- Deve validar que HTML legítimo ainda renderiza após sanitização.
 
 ---
 
 ## Escopo da sprint
 
-- Instalar DOMPurify como dependência npm.
-- Implementar sanitização de HTML antes de renderizar.
-- Implementar função de nome descritivo do PDF com sequência de 8 passos.
-- Implementar tratamento de encoding (UTF-8 com BOM, fallback Latin-1).
+1. Instalar DOMPurify via npm.
+2. Implementar sanitização no A4DocPreview.tsx.
+3. Corrigir nome do PDF (sequência de sanitização do PRD).
+4. Implementar validação de tamanho de importação (8MB).
+5. Implementar confirmação antes de substituir conteúdo.
+
+---
 
 ## Fora do escopo
 
-- Alterar visual ou layout.
-- Alterar templates.
-- Alterar configurações visuais.
-- Implementar loading/notificações (Sprint 4).
+- Não alterar parser Markdown além do necessário para sanitização.
+- Não alterar templates, presets ou temas.
+- Não alterar layout ou responsividade.
 
 ---
 
@@ -34,12 +47,10 @@ Esta sprint altera lógica de processamento (sanitização, nome do arquivo, enc
 
 | Arquivo | Ação | Observação |
 |---|---|---|
-| `package.json` | Alterar | Nova dependência DOMPurify |
-| Componente de preview ou App.tsx | Alterar | Aplicar sanitização antes de renderizar |
-| Função utilitária (nova ou existente) | Criar/alterar | Nome descritivo do PDF |
-| Função de importação | Alterar | Encoding UTF-8 com BOM |
-
-**Nota:** Caminhos são prováveis. Confirmar após Sprint 0.
+| `package.json` | Alterar | Adicionar dompurify, @types/dompurify |
+| `A4DocPreview.tsx` | Alterar | Aplicar DOMPurify após marked.parse() |
+| `App.tsx` | Alterar | Nome do PDF, validação 8MB, confirmação |
+| `Toolbar.tsx` | Alterar | Validação de tamanho no import |
 
 ---
 
@@ -47,7 +58,8 @@ Esta sprint altera lógica de processamento (sanitização, nome do arquivo, enc
 
 ### Tarefa 2.1 — Instalar DOMPurify
 
-**Descrição:** Instalar dompurify e @types/dompurify como dependências npm.
+**Descrição:**
+Executar `npm install dompurify @types/dompurify`.
 
 **Impacto UI/UX:** Não.
 
@@ -55,165 +67,145 @@ Esta sprint altera lógica de processamento (sanitização, nome do arquivo, enc
 - `package.json`
 
 **Critério de aceite:**
-- `npm install dompurify` completa sem erros.
+- DOMPurify instalado em node_modules.
 
 **Validação:**
-- `cat package.json | grep dompurify`.
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:** Nenhum arquivo além de `package.json`.
+- `npm ls dompurify`.
 
 ---
 
-### Tarefa 2.2 — Implementar sanitização de HTML
+### Tarefa 2.2 — Implementar sanitização
 
-**Descrição:** Aplicar DOMPurify no HTML gerado pelo marked antes de renderizar no preview. Configurar whitelist conforme PRD seção 7.11.
+**Descrição:**
+Importar DOMPurify em A4DocPreview.tsx. Após `marked.parse(section)`, aplicar `DOMPurify.sanitize(html)`. Configurar whitelist:
+- Tags permitidas: strong, em, br, p, div, span, table, tr, td, th, thead, tbody, ul, ol, li, blockquote, pre, code, h1-h6, a, img.
+- Tags bloqueadas: script, iframe, object, embed, form, input, button, style, link, meta, base.
+- Atributos permitidos: class, id, href, src, alt, title, colspan, rowspan.
+- Atributos bloqueados: todos os `on*`.
 
-**Impacto UI/UX:** Não (lógica interna).
+**Impacto UI/UX:** Indireto — afeta renderização de HTML no preview.
 
 **Arquivos prováveis:**
-- Componente que renderiza o preview (`App.tsx` ou `A4DocPreview.tsx`)
+- `A4DocPreview.tsx`
 
 **Critério de aceite:**
 - `<script>alert('xss')</script>` não é executado.
-- `<strong>texto</strong>` é renderizado como negrito.
-- `<a href="url">link</a>` é renderizado como link.
-- `<img src="url" alt="desc">` é renderizado como imagem.
-- `<iframe src="...">` é removido.
-- `onclick` e atributos `on*` são removidos.
-- HTML inválido é silenciosamente sanitizado.
-
-**Configuração DOMPurify sugerida:**
-- Tags permitidas: strong, em, br, p, div, span, table, tr, td, th, thead, tbody, ul, ol, li, blockquote, pre, code, h1-h6, a, img.
-- Atributos permitidos: class, id, href, src, alt, title, colspan, rowspan.
-- Tags bloqueadas: script, iframe, object, embed, form, input, button, style, link, meta, base.
-- Atributos bloqueados: todos os `on*`.
+- `<strong>texto</strong>` renderiza como negrito.
+- `<a href="...">link</a>` renderiza como link.
+- `<iframe>` é removido.
+- `onclick` é removido.
 
 **Validação:**
-- Inserir cada cenário de XSS no editor e verificar no preview.
-- Verificar que HTML válido continua funcionando.
+- Inserir cada tipo de HTML no editor e verificar preview.
 
 **Riscos:**
-- Sanitização muito restritiva pode quebrar documentos com HTML válido.
-- Sanitização muito permissiva pode deixar XSS.
-
-**O que NÃO alterar:**
-- Não alterar o parser Markdown (marked).
-- Não alterar a renderização do preview além de adicionar sanitização.
+- Whitelist muito restritiva pode quebrar HTML legítimo.
 
 ---
 
-### Tarefa 2.3 — Implementar nome descritivo do PDF
+### Tarefa 2.3 — Corrigir nome do PDF
 
-**Descrição:** Implementar a sequência de sanitização de 8 passos conforme PRD seção 7.10.
+**Descrição:**
+Em App.tsx, implementar a sequência de sanitização do nome do PDF conforme PRD seção 7.10:
+1. Prioridade: título da capa → primeiro heading # → nome do arquivo importado → fallback 50 chars.
+2. Sanitização: NFD → remover diacríticos → minúsculas → espaços/hífens por `-` → remover especiais → colapsar `-` → limitar 80 chars → fallback "documento".
 
-**Impacto UI/UX:** Não.
+**Impacto UI/UX:** Não — afeta apenas o nome do arquivo baixado.
 
 **Arquivos prováveis:**
-- Função utilitária (nova ou em `utils/`)
-- Local onde o PDF é gerado/baixado
+- `App.tsx`
 
 **Critério de aceite:**
-- Prioridade: título da capa > heading `#` > nome do arquivo importado > fallback.
-- Sequência: NFD → minúsculas → hífens → remover especiais → colapsar → limitar 80 → fallback "documento".
-- "Relatório Trimestral Q2" → `relatorio-trimestral-q2.pdf`.
+- Título "Relatório Trimestral Q2" → `relatorio-trimestral-q2.pdf`.
+- Nome genérico NÃO é gerado.
 
 **Validação:**
-- Testar com título com acentos.
-- Testar com título com caracteres especiais.
-- Testar com título vazio.
-- Testar com título muito longo (> 80 chars).
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:**
-- Não alterar a geração do PDF em si.
+- Exportar PDF com diferentes títulos → verificar nomes.
 
 ---
 
-### Tarefa 2.4 — Implementar encoding de importação
+### Tarefa 2.4 — Validação de tamanho de importação (8MB)
 
-**Descrição:** Garantir que a importação de arquivos aceita UTF-8 com ou sem BOM, com fallback para Latin-1.
+**Descrição:**
+Em App.tsx e Toolbar.tsx, antes de ler o arquivo, verificar `file.size`. Se > 8MB, mostrar mensagem de erro e não importar.
 
-**Impacto UI/UX:** Não.
+**Impacto UI/UX:** Indireto — mensagem de erro na importação.
 
 **Arquivos prováveis:**
-- Função de importação de arquivos
+- `App.tsx`
+- `Toolbar.tsx`
 
 **Critério de aceite:**
-- Arquivo UTF-8 com BOM é carregado corretamente.
-- Arquivo UTF-8 sem BOM é carregado corretamente.
-- Arquivo Latin-1 é tentado como fallback.
-- Caracteres de substituição (U+FFFD) geram aviso.
-- Encoding inválido gera mensagem de erro.
+- Arquivo > 8MB é rejeitado com mensagem de erro.
+- Arquivo ≤ 8MB é importado normalmente.
 
 **Validação:**
-- Criar arquivo de teste UTF-8 com BOM e importar.
-- Criar arquivo de teste Latin-1 e importar.
+- Criar arquivo de teste > 8MB → importar → verificar erro.
 
-**Riscos:** Nenhum.
+---
 
-**O que NÃO alterar:**
-- Não alterar a interface de importação.
+### Tarefa 2.5 — Confirmação antes de substituir conteúdo
+
+**Descrição:**
+Em App.tsx, antes de trocar template ou importar arquivo, se houver conteúdo no editor, mostrar modal de confirmação. Se o usuário cancelar, manter conteúdo atual.
+
+**Impacto UI/UX:** Sim — modal de confirmação.
+
+**Arquivos prováveis:**
+- `App.tsx`
+
+**Critério de aceite:**
+- Trocar template com conteúdo → modal aparece.
+- Cancelar → conteúdo mantido.
+- Confirmar → conteúdo substituído.
+- Importar arquivo com conteúdo → modal aparece.
+
+**Validação:**
+- Digitar no editor → trocar template → verificar modal.
 
 ---
 
 ## Comandos de validação da sprint
 
 ```bash
-# Build
+npx tsc --noEmit
 npm run build
-
-# Verificar DOMPurify no bundle
-grep -r "dompurify" dist/ | head -5
-
-# Preview local
-npm run preview
+npm run dev
 ```
 
 ---
 
 ## Testes necessários
 
-- **Testes de segurança:** XSS com múltiplas variantes.
-- **Testes manuais:** Nome do PDF, encoding de importação.
-- **Testes de regressão:** Preview e exportação continuam funcionando.
-
----
-
-## Fluxo manual de validação
-
-1. Abrir app no navegador.
-2. Inserir `<script>alert('xss')</script>` no Markdown → verificar que não executa.
-3. Inserir `<strong>texto</strong>` → verificar que renderiza.
-4. Inserir `<iframe src="...">` → verificar que é removido.
-5. Definir título "Relatório Trimestral Q2" → exportar PDF → verificar nome.
-6. Importar arquivo UTF-8 com BOM → verificar que carrega.
+- [ ] XSS bloqueado (script, iframe, onclick).
+- [ ] HTML válido renderiza.
+- [ ] Nome do PDF descritivo.
+- [ ] Importação > 8MB rejeitada.
+- [ ] Confirmação antes de substituir funciona.
+- [ ] Build funciona.
 
 ---
 
 ## Riscos da sprint
 
-- Sanitização pode quebrar HTML válido se whitelist for muito restritiva.
-- Nome do PDF pode não capturar o título correto se heurística falhar.
+- **MÉDIO:** DOMPurify whitelist pode ser muito restritiva.
+- **BAIXO:** Sequência de sanitização do nome pode ter edge cases.
 
 ---
 
 ## Critérios finais de aceite da sprint
 
 - [ ] `<script>` não é executado no preview.
-- [ ] Tags permitidas funcionam.
-- [ ] Atributos `on*` são removidos.
-- [ ] Nome do PDF segue sequência de sanitização.
-- [ ] Arquivo UTF-8 com BOM carrega.
-- [ ] Build completa sem erros.
+- [ ] Nome do PDF segue sanitização.
+- [ ] Importação > 8MB é rejeitada.
+- [ ] Confirmação funciona antes de substituir.
+- [ ] Build e typecheck passam.
 
 ---
 
 ## O que NÃO deve ser alterado nesta sprint
 
-- Visual ou layout.
-- Templates.
-- Configurações visuais.
-- Responsividade.
+- Não alterar parser Markdown além da sanitização.
+- Não alterar templates, presets ou temas.
+- Não alterar layout ou responsividade.
+- Não alterar lógica de paginação.

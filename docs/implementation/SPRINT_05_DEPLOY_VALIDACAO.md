@@ -1,32 +1,41 @@
-# Sprint 5 — Deploy na Vercel e validação final
+# Sprint 5 — Deploy e Validação
+
+Status: PENDENTE
+Depende de: Sprints 1, 2, 3, 4
+
+---
 
 ## Objetivo
 
-Configurar deploy na Vercel, adicionar meta tags obrigatórias, executar checklist final de validação e garantir que o MVP está pronto para uso.
+Remover GEMINI_API_KEY do código, configurar meta tags para SEO/OG, configurar build para Vercel, validar build de produção e executar checklist final de validação.
 
 ---
 
 ## Impacto UI/UX
 
-**Classificação:** Indireto.
+**Classificação:** Indireto
 
-Meta tags afetam compartilhamento e aparência em links. O deploy em si não altera a interface, mas configuração incorreta pode impedir acesso.
+- Meta tags afetam como o app aparece em links compartilhados (título, descrição).
+- Deploy na Vercel afeta acessibilidade do produto.
+- Remoção de GEMINI_API_KEY não afeta visual.
 
 ---
 
 ## Escopo da sprint
 
-- Adicionar meta tags obrigatórias ao `index.html` (title, description, favicon, og:title, og:description).
-- Configurar `vercel.json` ou equivalente para SPA redirect.
-- Executar checklist final do PRD seção 16.
-- Verificar bundle de produção.
+1. Remover GEMINI_API_KEY de vite.config.ts.
+2. Configurar meta tags (title, description, favicon, OG).
+3. Configurar build para Vercel.
+4. Validar build de produção.
+5. Checklist final de validação.
+
+---
 
 ## Fora do escopo
 
-- Alterar funcionalidades.
-- Alterar visual.
-- Adicionar analytics.
-- Configurar domínio personalizado.
+- Não alterar funcionalidades.
+- Não alterar templates, presets ou temas.
+- Não alterar sanitização ou regras de negócio.
 
 ---
 
@@ -34,122 +43,143 @@ Meta tags afetam compartilhamento e aparência em links. O deploy em si não alt
 
 | Arquivo | Ação | Observação |
 |---|---|---|
-| `index.html` | Alterar | Meta tags |
-| `vercel.json` | Criar | Config de deploy |
-
-**Nota:** Caminhos são prováveis. Confirmar após Sprint 0.
+| `vite.config.ts` | Alterar | Remover GEMINI_API_KEY |
+| `index.html` | Alterar | Meta tags, favicon |
+| `vercel.json` | Criar | Se necessário para SPA redirect |
 
 ---
 
 ## Tarefas em ordem
 
-### Tarefa 5.1 — Configurar meta tags
+### Tarefa 5.1 — Remover GEMINI_API_KEY
 
-**Descrição:** Adicionar meta tags obrigatórias ao `index.html`: title, description, favicon, Open Graph.
+**Descrição:**
+Remover as linhas `process.env.API_KEY` e `process.env.GEMINI_API_KEY` de vite.config.ts. Verificar se há referências em outros arquivos.
 
-**Impacto UI/UX:** Indireto — afeta aparência em links compartilhados.
+**Impacto UI/UX:** Não.
+
+**Arquivos prováveis:**
+- `vite.config.ts`
+
+**Critério de aceite:**
+- GEMINI_API_KEY não está em nenhum arquivo de código.
+- Bundle de produção não contém a chave.
+
+**Validação:**
+- `grep -r "GEMINI" .` → sem resultados.
+- Verificar bundle de produção.
+
+---
+
+### Tarefa 5.2 — Configurar meta tags
+
+**Descrição:**
+Adicionar ao `<head>` do index.html:
+- `<title>` com nome do produto.
+- `<meta name="description">` com descrição.
+- Favicon.
+- Open Graph: `og:title`, `og:description`, `og:type`, `og:url`.
+
+**Impacto UI/UX:** Indireto — afeta como o link aparece quando compartilhado.
 
 **Arquivos prováveis:**
 - `index.html`
 
 **Critério de aceite:**
-- `<title>` presente e descritivo.
+- `<title>` presente.
 - `<meta name="description">` presente.
-- Favicon configurado.
-- `og:title` presente.
-- `og:description` presente.
+- Favicon presente.
+- OG tags presentes.
 
 **Validação:**
-- Abrir `index.html` e verificar tags.
-- Compartilhar URL e verificar preview.
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:**
-- Não alterar scripts ou imports.
+- Verificar `<head>` do index.html.
+- Compartilhar link → verificar preview.
 
 ---
 
-### Tarefa 5.2 — Configurar Vercel
+### Tarefa 5.3 — Configurar build para Vercel
 
-**Descrição:** Criar `vercel.json` com configuração para SPA (redirect para index.html se necessário).
+**Descrição:**
+Configurar:
+- Framework: Vite.
+- Build command: `npm run build`.
+- Output directory: `dist`.
+- SPA redirect para index.html (se necessário).
+- Criar `vercel.json` se necessário.
 
 **Impacto UI/UX:** Não.
 
 **Arquivos prováveis:**
-- `vercel.json`
+- `vite.config.ts`
+- `vercel.json` (se necessário)
 
 **Critério de aceite:**
-- `vercel.json` existe com configuração correta.
-- Framework: Vite detectado automaticamente.
-- Build command: `npm run build`.
-- Output directory: `dist`.
+- `npm run build` gera `dist/`.
+- `dist/` contém index.html e assets.
 
 **Validação:**
-- `vercel deploy` (se CLI disponível) ou verificar config.
-
-**Riscos:**
-- Config incorreta pode impedir deploy.
-
-**O que NÃO alterar:**
-- Não alterar `vite.config.ts` para deploy.
+- `npm run build` → verificar `dist/`.
 
 ---
 
-### Tarefa 5.3 — Executar checklist final
+### Tarefa 5.4 — Validar build de produção
 
-**Descrição:** Verificar todos os critérios de aceite gerais do PRD (seção 16) e o checklist de qualidade.
+**Descrição:**
+Executar `npm run build` e verificar:
+- Sem erros.
+- `dist/` gerado corretamente.
+- Bundle não contém GEMINI_API_KEY.
+- Bundle não contém CDNs.
 
 **Impacto UI/UX:** Não.
 
-**Arquivos prováveis:** Todos.
+**Arquivos prováveis:**
+- Todos.
 
 **Critério de aceite:**
-- Todos os itens do checklist abaixo marcados como OK.
+- `npm run build` funciona.
+- `dist/` está correto.
+- Sem chaves ou CDNs no bundle.
 
-**Checklist PRD seção 16:**
-- [ ] App abre sem erro.
+**Validação:**
+- `npm run build`.
+- `grep -r "GEMINI" dist/`.
+- `grep -r "cdn\." dist/`.
+
+---
+
+### Tarefa 5.5 — Checklist final de validação
+
+**Descrição:**
+Executar checklist completo do PRD seção 16 e 20.7.
+
+**Impacto UI/UX:** Não.
+
+**Critério de aceite:**
+- [ ] App abre sem erro na Vercel.
 - [ ] Usuário pode digitar Markdown e ver preview.
-- [ ] Usuário pode importar arquivo `.md`.
+- [ ] Usuário pode importar arquivo .md.
 - [ ] Usuário pode ajustar configurações visuais.
 - [ ] Usuário pode exportar PDF.
 - [ ] PDF tem nome descritivo.
-- [ ] HTML perigoso é sanitizado.
-- [ ] App funciona em mobile (320px).
-- [ ] App funciona em Chrome, Firefox, Safari, Edge.
-- [ ] Não há erros no console.
-- [ ] CDNs foram substituídas.
+- [ ] HTML `<script>` não é executado.
+- [ ] CDNs não estão no bundle.
 - [ ] GEMINI_API_KEY não está exposta.
-- [ ] Preview e PDF têm mesma quantidade de páginas.
-- [ ] Botão de exportar mostra feedback visual.
+- [ ] App funciona em mobile (320px).
+- [ ] Botão de exportar mostra spinner.
 - [ ] `---` em code block não cria quebra.
-
-**Validação:**
-- Testar cada item manualmente.
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:**
-- Nenhum arquivo (apenas verificação).
+- [ ] Preview vazio mostra mensagem.
+- [ ] Não há erros no console.
+- [ ] Funciona em Chrome, Firefox, Safari, Edge.
 
 ---
 
 ## Comandos de validação da sprint
 
 ```bash
-# Build
+npx tsc --noEmit
 npm run build
-
-# Verificar meta tags
-grep -E "<title>|<meta name=\"description\"|og:title" index.html
-
-# Verificar bundle
-ls -la dist/
-
-# Verificar ausência de CDNs e GEMINI
-grep -r "cdn\\|GEMINI" dist/
-
-# Preview local final
+npm run dev
 npm run preview
 ```
 
@@ -157,56 +187,37 @@ npm run preview
 
 ## Testes necessários
 
-- **Testes manuais:** Todos os critérios do PRD seção 16.
-- **Testes de compatibilidade:** Chrome, Firefox, Safari, Edge.
-- **Testes de responsividade:** 320px, 768px, 1024px, 1440px.
-
----
-
-## Fluxo manual de validação
-
-1. Executar `npm run build`.
-2. Executar `npm run preview`.
-3. Abrir no navegador.
-4. Testar cada critério da seção 16 do PRD.
-5. Testar em mobile (DevTools).
-6. Verificar console sem erros.
-7. Exportar PDF e verificar.
+- [ ] GEMINI_API_KEY removida.
+- [ ] Meta tags presentes.
+- [ ] Build funciona.
+- [ ] App funciona na Vercel.
+- [ ] Chrome funciona.
+- [ ] Firefox funciona.
+- [ ] Safari funciona.
+- [ ] Edge funciona.
 
 ---
 
 ## Riscos da sprint
 
-- Deploy na Vercel pode ter problemas de configuração.
-- Alguns critérios podem não passar na primeira tentativa.
+- **MÉDIO:** Configuração Vercel pode ter edge cases.
+- **BAIXO:** Meta tags podem estar incompletas.
 
 ---
 
 ## Critérios finais de aceite da sprint
 
-- [ ] Meta tags presentes no `index.html`.
-- [ ] `vercel.json` configurado.
-- [ ] Todos os critérios do PRD seção 16 passam.
-- [ ] Build completa sem erros.
-- [ ] Bundle não contém CDNs nem GEMINI_API_KEY.
+- [ ] GEMINI_API_KEY removida.
+- [ ] Meta tags configuradas.
+- [ ] Build funciona.
+- [ ] Deploy na Vercel funciona.
+- [ ] Checklist final completo.
 
 ---
 
 ## O que NÃO deve ser alterado nesta sprint
 
-- Funcionalidades existentes.
-- Visual ou layout.
-- Templates.
-- Configurações visuais.
-
----
-
-## Sugestões fora do escopo
-
-As seguintes sugestões NÃO fazem parte da implementação atual:
-
-- Configurar domínio personalizado na Vercel.
-- Adicionar Vercel Analytics.
-- Adicionar Sentry para error tracking.
-- Implementar PWA (service worker).
-- Adicionar testes automatizados.
+- Não alterar funcionalidades.
+- Não alterar templates, presets ou temas.
+- Não alterar sanitização ou regras de negócio.
+- Não alterar responsividade.

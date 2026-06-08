@@ -1,120 +1,129 @@
 # Plano de Testes
 
-**Projeto:** Markdown para PDF
-**PRD de origem:** `docs/product/PRD_v1.1.md`
-**Data:** 2026-06-07
+Projeto: `/mnt/c/Dev/markdown-para-pdf`
+Versão: 2.0 (PDs resolvidos)
+Data: 2026-06-07
 
 ---
 
 ## 1. Estratégia geral de validação
 
-O projeto não possui testes automatizados configurados. A validação será feita por:
+O projeto não possui testes automatizados. A validação é feita por:
 
-1. **Build verification:** `npm run build` deve completar sem erros.
-2. **Manual testing:** cada sprint terá um fluxo manual de validação.
-3. **Console verification:** o console do navegador não deve ter erros.
-4. **Visual inspection:** comparação entre preview e PDF exportado.
+1. **Build**: `npm run build` deve gerar `dist/` sem erro.
+2. **Dev**: `npm run dev` deve iniciar sem erro no console.
+3. **TypeScript**: `npx tsc --noEmit` deve passar sem erros.
+4. **Manual**: cada sprint tem fluxo manual de validação.
+
+Não há framework de teste configurado (sem vitest, jest, etc.).
 
 ---
 
 ## 2. Comandos prováveis
 
-| Comando | Finalidade | Observação |
-|---|---|---|
-| `npm run dev` | Iniciar servidor de desenvolvimento | Porta 3000 |
-| `npm run build` | Gerar bundle de produção | Deve completar sem erros |
-| `npm run preview` | Visualizar bundle de produção local | Verificar se app funciona |
+```bash
+# Instalar dependências
+npm install
 
-**Nota:** O projeto não tem scripts de lint, typecheck ou test configurados no `package.json`. Se necessário, adicionar `tsc --noEmit` para typecheck.
+# Desenvolvimento
+npm run dev
 
-Comandos adicionais que podem ser necessários:
-- `npx tsc --noEmit` — verificar tipos TypeScript.
-- Verificação manual no DevTools do navegador.
+# Build de produção
+npm run build
+
+# Typecheck
+npx tsc --noEmit
+
+# Preview do build
+npm run preview
+```
+
+**Nota:** Comandos confirmados no `package.json`.
 
 ---
 
 ## 3. Testes por sprint
 
-### Sprint 0 — Preparação
+### Sprint 0 — Preparação (CONCLUÍDA)
 
-- **Testes unitários:** Nenhum (sprint de leitura).
-- **Testes manuais:** Verificar que `npm run dev` inicia sem erros.
-- **Testes de regressão:** Nenhum.
+- Nenhum teste necessário (sprint de leitura apenas).
 
 ### Sprint 1 — Migração de dependências
 
-- **Testes manuais:**
-  - App abre sem erro no navegador.
-  - Classes Tailwind são aplicadas (cores, layout).
-  - Markdown é renderizado no preview.
-  - PDF é exportado corretamente.
-  - Nenhuma CDN no `index.html`.
-  - GEMINI_API_KEY não está no bundle (`grep -r "GEMINI" dist/`).
-- **Testes de regressão:**
-  - Todas as funcionalidades existentes continuam funcionando.
-  - Preview paginado funciona.
-  - Templates carregam.
+| Teste | Tipo | Como verificar |
+|---|---|---|
+| App inicia sem erro | Manual | `npm run dev` → abrir no browser → sem erro no console |
+| Build funciona | Manual | `npm run build` → `dist/` gerado sem erro |
+| Preview renderiza Markdown | Manual | Digitar Markdown → preview atualiza |
+| PDF exporta | Manual | Clicar "Baixar PDF" → arquivo baixado |
+| Não há CDNs no HTML | Manual | Verificar `index.html` sem `<script src="cdn...">` |
+| Não há erros de tipo | Manual | `npx tsc --noEmit` sem erros |
+| Tailwind funciona | Manual | Classes Tailwind aplicadas no visual |
 
 ### Sprint 2 — Sanitização e nome do PDF
 
-- **Testes manuais:**
-  - Inserir `<script>alert('xss')</script>` no Markdown → não executa.
-  - Inserir `<strong>texto</strong>` → renderiza como negrito.
-  - Inserir `<iframe src="...">` → removido do output.
-  - Exportar PDF com título "Relatório Trimestral Q2" → arquivo `relatorio-trimestral-q2.pdf`.
-  - Importar arquivo UTF-8 com BOM → carrega corretamente.
-- **Testes de segurança:**
-  - Verificar XSS com múltiplas variantes de `<script>`.
-  - Verificar que `onclick` e atributos `on*` são removidos.
+| Teste | Tipo | Como verificar |
+|---|---|---|
+| XSS bloqueado | Manual | Inserir `<script>alert('xss')</script>` no Markdown → não executa |
+| HTML válido funciona | Manual | Inserir `<strong>texto</strong>` → renderiza como negrito |
+| Links funcionam | Manual | Inserir `<a href="...">link</a>` → renderiza como link |
+| Iframe removido | Manual | Inserir `<iframe src="...">` → removido do output |
+| onclick removido | Manual | Inserir `<div onclick="alert(1)">` → atributo removido |
+| Nome do PDF descritivo | Manual | Exportar com título "Relatório Q2" → arquivo `relatorio-q2.pdf` |
+| Importação > 8MB rejeitada | Manual | Importar arquivo > 8MB → mensagem de erro |
+| Confirmação antes de substituir | Manual | Trocar template com conteúdo → modal de confirmação |
 
 ### Sprint 3 — Regras de negócio
 
-- **Testes manuais:**
-  - Inserir `---` dentro de bloco de código → NÃO cria quebra de página.
-  - Inserir `---` isolado → cria quebra de página.
-  - Habilitar capa → numeração começa em 1 no corpo.
-  - Desabilitar capa → numeração começa em 1 na primeira página.
-  - Editor vazio → preview mostra mensagem orientativa.
-  - Recarregar página → configurações voltam ao padrão.
+| Teste | Tipo | Como verificar |
+|---|---|---|
+| `---` cria quebra | Manual | Inserir `---` isolado → nova página no preview |
+| `---` em code block NÃO cria quebra | Manual | Inserir `---` dentro de bloco de código → sem quebra |
+| Preview vazio mostra mensagem | Manual | Limpar editor → preview mostra "Comece a digitar..." |
+| Numeração correta | Manual | Documento com capa → numeração começa em 1 no corpo |
+| Encoding UTF-8 BOM | Manual | Importar arquivo com BOM → conteúdo correto |
 
 ### Sprint 4 — UX e responsividade
 
-- **Testes manuais:**
-  - Clicar em exportar → botão mostra spinner e fica desabilitado.
-  - Exportar PDF com sucesso → toast de sucesso aparece e desaparece após 5s.
-  - Simular erro de exportação → toast de erro aparece.
-  - Abrir em mobile (< 768px) → botões Editor/Preview aparecem.
-  - Alternar entre Editor e Preview em mobile.
-  - Configurações acessíveis via overlay em mobile.
-  - Botões da toolbar >= 44px em mobile.
-  - Sem scroll horizontal em tela de 320px.
+| Teste | Tipo | Como verificar |
+|---|---|---|
+| Mobile 320px funciona | Manual | Abrir em DevTools 320px → sem scroll horizontal |
+| Botões Editor/Preview alternam | Manual | Em mobile → botões alternam áreas |
+| 44px área de toque | Manual | Verificar botões da toolbar ≥ 44px |
+| Notificação 5s | Manual | Exportar → notificação desaparece após 5s |
+| Spinner exportar | Manual | Clicar exportar → botão mostra spinner e desabilita |
+| Timeout 30s | Manual | (Difícil de testar; verificar código) |
 
 ### Sprint 5 — Deploy e validação
 
-- **Testes manuais:**
-  - App abre na URL da Vercel sem erro.
-  - Todos os critérios de aceite gerais do PRD (seção 16).
-  - Meta tags presentes (verificar com DevTools).
-  - Favicon aparece.
-  - PDF exportado na Vercel funciona.
+| Teste | Tipo | Como verificar |
+|---|---|---|
+| GEMINI_API_KEY removida | Manual | Buscar no bundle de produção |
+| Meta tags presentes | Manual | Verificar `<head>` do index.html |
+| Build de produção OK | Manual | `npm run build` → sem erro |
+| App funciona na Vercel | Manual | Deploy → acessar URL → funciona |
+| Chrome funciona | Manual | Testar no Chrome |
+| Firefox funciona | Manual | Testar no Firefox |
+| Safari funciona | Manual | Testar no Safari |
+| Edge funciona | Manual | Testar no Edge |
 
 ---
 
 ## 4. Critérios de aprovação
 
-A implementação é considerada pronta quando:
+Para considerar o MVP pronto:
 
-- [ ] `npm run build` completa sem erros.
-- [ ] Nenhuma CDN no `index.html`.
-- [ ] GEMINI_API_KEY não está no bundle.
-- [ ] HTML `<script>` não é executado no preview.
-- [ ] Nome do PDF segue sequência de sanitização.
-- [ ] `---` em code block não cria quebra de página.
-- [ ] Numeração começa em 1 no corpo (capa não contada).
+- [ ] `npm run build` funciona sem erro.
+- [ ] App abre sem erro no browser.
+- [ ] Usuário pode digitar Markdown e ver preview.
+- [ ] Usuário pode importar arquivo .md.
+- [ ] Usuário pode ajustar configurações visuais.
+- [ ] Usuário pode exportar PDF com nome descritivo.
+- [ ] HTML `<script>` não é executado.
+- [ ] CDNs não estão no bundle de produção.
+- [ ] GEMINI_API_KEY não está exposta.
+- [ ] App funciona em mobile (320px).
+- [ ] Botão de exportar mostra spinner.
+- [ ] `---` em code block não cria quebra.
 - [ ] Preview vazio mostra mensagem orientativa.
-- [ ] Botão de exportar mostra spinner e fica desabilitado.
-- [ ] Notificações de sucesso/erro funcionam.
-- [ ] App funciona em mobile 320px sem scroll horizontal.
-- [ ] App funciona em desktop >= 1024px com editor e preview lado a lado.
-- [ ] Não há erros no console do navegador.
-- [ ] App abre na Vercel sem erro.
+- [ ] Não há erros no console do browser.

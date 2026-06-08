@@ -1,38 +1,46 @@
-# Sprint 1 — Migração de dependências CDN para npm
+# Sprint 1 — Migração de Dependências
+
+Status: PENDENTE
+Depende de: Sprint 0 (CONCLUÍDA)
+
+---
 
 ## Objetivo
 
-Substituir as 4 CDNs (Tailwind, marked, jspdf, html2canvas) por dependências npm locais, remover a GEMINI_API_KEY e garantir que o app compila e funciona sem CDNs externas.
+Substituir todas as CDNs carregadas via `<script>` no index.html por dependências npm locais. Habilitar `strict: true` no TypeScript. Garantir que o app funciona sem nenhuma CDN em runtime.
 
 ---
 
 ## Impacto UI/UX
 
-**Classificação:** Indireto.
+**Classificação:** Indireto
 
-A migração de CDNs não altera telas diretamente, mas se o build quebrar, toda a interface será afetada. Após a migração, o visual deve ser idêntico ao anterior.
+Esta sprint não altera componentes visuais diretamente, mas a migração de Tailwind CDN para npm pode afetar a renderização de todas as classes CSS. A migração de marked pode afetar a renderização do preview.
 
-- Deve validar que o visual não mudou após a migração.
-- Deve verificar mobile e desktop após cada tarefa.
+- Deve seguir `/docs/design/UI_UX_GUIDE.md` para verificar consistência visual após migração.
+- Deve validar que o preview renderiza corretamente após migração.
+- Deve validar mobile e desktop após cada migração.
 
 ---
 
 ## Escopo da sprint
 
-- Instalar marked, jspdf, html2canvas, tailwindcss, @tailwindcss/vite, @tailwindcss/typography como npm.
-- Configurar Tailwind via plugin Vite em vez de CDN.
-- Remover todas as tags `<script src="cdn...">` do index.html.
-- Atualizar imports do código para usar npm em vez de globais.
-- Remover GEMINI_API_KEY do vite.config.ts.
-- Validar build completo.
+1. Instalar marked via npm e converter de global para import.
+2. Instalar jspdf via npm e converter de global para import.
+3. Instalar html2canvas via npm e converter de global para import.
+4. Instalar Tailwind CSS via npm (@tailwindcss/vite) e remover CDN.
+5. Remover import maps do index.html.
+6. Habilitar `strict: true` no tsconfig.json.
+7. Corrigir erros de tipo resultantes.
+
+---
 
 ## Fora do escopo
 
-- Alterar funcionalidade existente.
-- Alterar layout ou visual.
-- Adicionar novas features.
-- Implementar sanitização (Sprint 2).
-- Alterar templates.
+- Não implementar funcionalidades novas.
+- Não alterar templates, presets ou temas.
+- Não alterar comportamento de importação ou exportação.
+- Não remover GEMINI_API_KEY (Sprint 5).
 
 ---
 
@@ -40,77 +48,141 @@ A migração de CDNs não altera telas diretamente, mas se o build quebrar, toda
 
 | Arquivo | Ação | Observação |
 |---|---|---|
-| `package.json` | Alterar | Novas dependências |
-| `index.html` | Alterar | Remover CDNs, remover import maps |
-| `vite.config.ts` | Alterar | Adicionar Tailwind plugin, remover GEMINI_API_KEY |
-| `App.tsx` | Alterar | Imports de marked/jspdf/html2canvas |
-| `components/A4DocPreview.tsx` | Alterar | Se usa html2canvas/jspdf |
-| `styles.ts` ou CSS | Alterar/criar | Tailwind CSS via npm |
-| `tailwind.config.js` ou `tailwind.config.ts` | Criar | Config do Tailwind |
+| `package.json` | Alterar | Adicionar marked, jspdf, html2canvas, tailwindcss, @tailwindcss/vite |
+| `index.html` | Alterar | Remover CDNs, import maps |
+| `vite.config.ts` | Alterar | Adicionar plugin Tailwind |
+| `tsconfig.json` | Alterar | Habilitar strict: true |
+| `A4DocPreview.tsx` | Alterar | Converter `declare const marked` para import |
+| `App.tsx` | Alterar | Converter `declare const jspdf/html2canvas` para imports |
+| `tailwind.config.js` | Criar | Se necessário para configuração Tailwind |
 
-**Nota:** Caminhos são prováveis. Confirmar após leitura da codebase na Sprint 0.
+**Nota:** Caminhos devem ser confirmados após leitura da codebase.
 
 ---
 
 ## Tarefas em ordem
 
-### Tarefa 1.1 — Instalar dependências npm
+### Tarefa 1.1 — Instalar marked via npm
 
-**Descrição:** Instalar marked, jspdf, html2canvas, tailwindcss, @tailwindcss/vite, @tailwindcss/typography.
+**Descrição:**
+Executar `npm install marked`. Remover `<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>` do index.html. Converter `declare const marked` em A4DocPreview.tsx para `import { marked } from 'marked'`.
 
-**Impacto UI/UX:** Não.
+**Impacto UI/UX:** Indireto — afeta renderização do preview.
 
 **Arquivos prováveis:**
 - `package.json`
+- `index.html`
+- `A4DocPreview.tsx`
 
 **Critério de aceite:**
-- `npm install` completa sem erros.
-- Dependências aparecem em `package.json`.
+- `npm run dev` funciona sem erro.
+- Preview renderiza Markdown corretamente.
+- Não há referência a CDN marked no index.html.
 
 **Validação:**
-- `cat package.json | grep -E "marked|jspdf|html2canvas|tailwindcss"`.
+- `npm run dev` → abrir browser → digitar Markdown → preview atualiza.
+- Verificar index.html sem script CDN marked.
 
 **Riscos:**
-- Versões incompatíveis com o código existente.
+- API do marked pode diferir entre CDN e npm.
+- Types podem não estar incluídos.
 
 **O que NÃO alterar:**
-- Não alterar código fonte ainda.
+- Não alterar templates.ts.
+- Não alterar lógica de parsing além do necessário.
 
 ---
 
-### Tarefa 1.2 — Configurar Tailwind via vite plugin
+### Tarefa 1.2 — Instalar jspdf via npm
 
-**Descrição:** Substituir a CDN do Tailwind pelo plugin @tailwindcss/vite. Configurar CSS entry point.
+**Descrição:**
+Executar `npm install jspdf @types/jspdf`. Remover CDN do index.html. Converter `declare const jspdf` em App.tsx para `import { jsPDF } from 'jspdf'`.
 
-**Impacto UI/UX:** Indireto — se configurado incorretamente, todo o CSS quebra.
+**Impacto UI/UX:** Não — afeta apenas exportação PDF.
 
 **Arquivos prováveis:**
-- `vite.config.ts`
-- `index.html` (remover `<script src="https://cdn.tailwindcss.com">`)
-- `styles.ts` ou novo arquivo CSS
-- `tailwind.config.js` ou `tailwind.config.ts`
+- `package.json`
+- `index.html`
+- `App.tsx`
 
 **Critério de aceite:**
-- Classes Tailwind funcionam sem CDN.
-- Visual idêntico ao anterior.
+- PDF exporta com sucesso.
+- Não há referência a CDN jspdf no index.html.
 
 **Validação:**
-- `npm run dev` → app abre com estilos corretos.
-- Comparar visual antes/depois.
+- Clicar "Baixar PDF" → arquivo baixado → abre corretamente.
 
 **Riscos:**
-- CSS quebrado se configuração incorreta.
-- Plugins Tailwind (typography) podem precisar de configuração adicional.
+- API pode diferir entre CDN e npm.
 
 **O que NÃO alterar:**
-- Não alterar classes Tailwind usadas no código.
-- Não alterar layout ou visual.
+- Não alterar lógica de geração além do necessário.
 
 ---
 
-### Tarefa 1.3 — Remover CDNs do index.html
+### Tarefa 1.3 — Instalar html2canvas via npm
 
-**Descrição:** Remover todas as tags `<script src="cdn...">` do index.html (marked, jspdf, html2canvas). Manter import maps apenas se necessário para React.
+**Descrição:**
+Executar `npm install html2canvas`. Remover CDN do index.html. Converter `declare const html2canvas` em App.tsx para `import html2canvas from 'html2canvas'`.
+
+**Impacto UI/UX:** Não — afeta apenas captura de páginas.
+
+**Arquivos prováveis:**
+- `package.json`
+- `index.html`
+- `App.tsx`
+
+**Critério de aceite:**
+- PDF exporta com sucesso.
+- Não há referência a CDN html2canvas no index.html.
+
+**Validação:**
+- Clicar "Baixar PDF" → arquivo baixado.
+
+**Riscos:**
+- html2canvas pode não capturar corretamente após migração.
+
+**O que NÃO alterar:**
+- Não alterar configurações de captura.
+
+---
+
+### Tarefa 1.4 — Instalar Tailwind via npm
+
+**Descrição:**
+Executar `npm install tailwindcss @tailwindcss/vite`. Remover `<script src="https://cdn.tailwindcss.com"></script>` e configuração inline do index.html. Adicionar plugin Tailwind no vite.config.ts. Criar CSS com `@import "tailwindcss"` se necessário.
+
+**Impacto UI/UX:** Indireto — afeta TODAS as classes CSS do app.
+
+**Arquivos prováveis:**
+- `package.json`
+- `index.html`
+- `vite.config.ts`
+- CSS files
+
+**Critério de aceite:**
+- App visualmente idêntico após migração.
+- Classes Tailwind funcionam (cores, layout, responsividade).
+
+**Validação:**
+- Comparar visual antes/depois da migração.
+- Testar em mobile e desktop.
+
+**Riscos:**
+- **ALTO:** Pode quebrar todas as classes CSS.
+- darkMode config pode precisar de ajuste.
+- Typography plugin pode não funcionar via npm da mesma forma.
+
+**O que NÃO alterar:**
+- Não alterar classes Tailwind nos componentes.
+- Não alterar configuração de darkMode (manter 'class').
+
+---
+
+### Tarefa 1.5 — Remover import maps
+
+**Descrição:**
+Remover bloco `<script type="importmap">` do index.html. React e ReactDOM já estão em package.json.
 
 **Impacto UI/UX:** Não.
 
@@ -118,191 +190,143 @@ A migração de CDNs não altera telas diretamente, mas se o build quebrar, toda
 - `index.html`
 
 **Critério de aceite:**
-- Nenhuma tag `<script src="http...">` no index.html (exceto se React precisar de import map).
-- App funciona após remoção.
+- App funciona sem import maps.
+- React carrega via npm/Vite.
 
 **Validação:**
-- `grep -c "cdn" index.html` deve retornar 0.
 - `npm run dev` → app funciona.
 
 **Riscos:**
-- Remover import map do React pode quebrar o app.
+- Baixo — Vite resolve imports automaticamente.
 
 **O que NÃO alterar:**
-- Não remover o `<script type="module">` que carrega o app.
+- Não alterar imports em componentes React.
 
 ---
 
-### Tarefa 1.4 — Adicionar imports npm no código
+### Tarefa 1.6 — Habilitar strict mode
 
-**Descrição:** Atualizar o código para importar marked, jspdf e html2canvas via npm em vez de usar variáveis globais.
+**Descrição:**
+Adicionar `"strict": true` no tsconfig.json.
 
 **Impacto UI/UX:** Não.
 
 **Arquivos prováveis:**
-- `App.tsx`
-- Componentes que usam marked/jspdf/html2canvas
+- `tsconfig.json`
 
 **Critério de aceite:**
-- `import { marked } from 'marked'` funciona.
-- `import jsPDF from 'jspdf'` funciona.
-- `import html2canvas from 'html2canvas'` funciona.
-- App compila sem erros de tipo.
+- `npx tsc --noEmit` passa sem erros (após tarefa 1.7).
 
 **Validação:**
-- `npm run build` sem erros.
-- App funciona no navegador.
+- `npx tsc --noEmit`.
 
 **Riscos:**
-- API das bibliotecas pode diferir entre CDN e npm.
-- Tipos TypeScript podem não estar incluídos.
+- Pode revelar dezenas de erros de tipo.
+
+**O que NÃO alterar:**
+- Não alterar outras configurações do tsconfig.
+
+---
+
+### Tarefa 1.7 — Corrigir erros de tipo do strict mode
+
+**Descrição:**
+Executar `npx tsc --noEmit` e corrigir todos os erros de tipo revelados pelo strict mode.
+
+**Impacto UI/UX:** Não — correções de tipo não alteram visual.
+
+**Arquivos prováveis:**
+- Todos os .tsx e .ts com erros.
+
+**Critério de aceite:**
+- `npx tsc --noEmit` passa sem erros.
+- App funciona normalmente.
+
+**Validação:**
+- `npx tsc --noEmit` → 0 erros.
+- `npm run dev` → app funciona.
+- `npm run build` → build OK.
+
+**Riscos:**
+- Correções podem alterar comportamento se não cuidadosas.
 
 **O que NÃO alterar:**
 - Não alterar lógica de negócio.
-- Não alterar comportamento das funcionalidades.
-
----
-
-### Tarefa 1.5 — Remover GEMINI_API_KEY
-
-**Descrição:** Remover todas as referências à GEMINI_API_KEY do vite.config.ts e do código.
-
-**Impacto UI/UX:** Não.
-
-**Arquivos prováveis:**
-- `vite.config.ts`
-- `App.tsx` (se houver referência)
-
-**Critério de aceite:**
-- Nenhuma referência a `GEMINI_API_KEY` no vite.config.ts.
-- Nenhuma referência a `process.env.GEMINI_API_KEY` no código.
-- `grep -r "GEMINI" dist/` retorna vazio após build.
-
-**Validação:**
-- `npm run build && grep -r "GEMINI" dist/` → vazio.
-
-**Riscos:**
-- Se houver código que usa a key, pode quebrar funcionalidade (mas o PRD diz que não tem uso real).
-
-**O que NÃO alterar:**
-- Não remover `.env` se existir (apenas parar de referenciar).
-
----
-
-### Tarefa 1.6 — Atualizar imports do código
-
-**Descrição:** Garantir que todos os imports de marked, jspdf, html2canvas usam a versão npm.
-
-**Impacto UI/UX:** Não.
-
-**Arquivos prováveis:**
-- Todos os componentes que usam essas bibliotecas.
-
-**Critério de aceite:**
-- Nenhum `window.marked`, `window.jspdf`, `window.html2canvas` no código.
-
-**Validação:**
-- `grep -r "window\.marked\|window\.jspdf\|window\.html2canvas" --include="*.ts" --include="*.tsx"` → vazio.
-
-**Riscos:**
-- Nenhum significativo.
-
-**O que NÃO alterar:**
-- Não alterar comportamento.
-
----
-
-### Tarefa 1.7 — Validar build completo
-
-**Descrição:** Executar build e verificar que o bundle não contém CDNs nem GEMINI_API_KEY.
-
-**Impacto UI/UX:** Não.
-
-**Arquivos prováveis:**
-- `dist/`
-
-**Critério de aceite:**
-- `npm run build` completa sem erros.
-- `grep -r "cdn.tailwindcss\|cdn.jsdelivr\|cdnjs.cloudflare\|GEMINI" dist/` → vazio.
-
-**Validação:**
-- Comandos acima.
-- `npm run preview` → app funciona.
-
-**Riscos:**
-- Nenhum.
-
-**O que NÃO alterar:**
-- Nenhum arquivo.
+- Não alterar comportamento visual.
 
 ---
 
 ## Comandos de validação da sprint
 
 ```bash
+# Typecheck
+npx tsc --noEmit
+
 # Build
 npm run build
 
-# Verificar ausência de CDNs no HTML
-grep -c "cdn" index.html
+# Dev
+npm run dev
 
-# Verificar ausência de GEMINI no bundle
-grep -r "GEMINI" dist/
-
-# Verificar ausência de globais
-grep -r "window\.marked\|window\.jspdf\|window\.html2canvas" --include="*.ts" --include="*.tsx"
-
-# Preview local
-npm run preview
+# Verificar ausência de CDNs
+grep -c "cdn\." index.html  # Deve retornar 0
 ```
 
 ---
 
 ## Testes necessários
 
-- **Testes manuais:** App abre, Markdown renderiza, PDF exporta, Tailwind funciona.
-- **Testes de regressão:** Todas as funcionalidades existentes continuam funcionando.
+- [ ] App inicia sem erro no console.
+- [ ] Preview renderiza Markdown.
+- [ ] PDF exporta com sucesso.
+- [ ] Classes Tailwind funcionam (cores, layout).
+- [ ] Mobile funciona.
+- [ ] `npx tsc --noEmit` passa.
+- [ ] `npm run build` gera `dist/`.
+- [ ] Não há CDNs no index.html.
 
 ---
 
 ## Fluxo manual de validação
 
-1. Executar `npm run dev`.
-2. Abrir no navegador.
-3. Verificar que o layout está correto (Tailwind funcionando).
-4. Digitar Markdown no editor.
-5. Verificar que o preview renderiza.
-6. Exportar PDF e verificar download.
-7. Verificar que o nome do PDF não é genérico.
-8. Verificar mobile (se possível).
+1. Executar `npm install`.
+2. Executar `npm run dev`.
+3. Abrir no browser.
+4. Verificar que o template padrão carrega.
+5. Digitar Markdown → preview atualiza.
+6. Clicar "Baixar PDF" → arquivo baixado.
+7. Verificar que o visual está correto (Tailwind).
+8. Testar em mobile (320px).
+9. Verificar console sem erros.
 
 ---
 
 ## Riscos da sprint
 
-- Migração de CDNs pode quebrar o build se houver incompatibilidade de versões.
-- Tailwind via npm pode ter comportamento diferente da CDN.
-- Import maps do React podem precisar ser mantidos.
+- **ALTO:** Migração Tailwind pode quebrar visual.
+- **ALTO:** marked API pode diferir.
+- **MÉDIO:** strict mode pode revelar muitos erros.
 
 ---
 
 ## Critérios finais de aceite da sprint
 
-- [ ] `npm run build` completa sem erros.
-- [ ] Nenhuma CDN no `index.html`.
-- [ ] GEMINI_API_KEY não está no bundle.
-- [ ] App funciona no navegador.
-- [ ] Classes Tailwind funcionam.
-- [ ] Markdown é renderizado no preview.
-- [ ] PDF é exportado corretamente.
-- [ ] Visual idêntico ao anterior.
+- [ ] `npm run dev` funciona sem erro.
+- [ ] `npm run build` gera `dist/` sem erro.
+- [ ] `npx tsc --noEmit` passa sem erros.
+- [ ] Não há CDNs no index.html.
+- [ ] Preview renderiza Markdown.
+- [ ] PDF exporta com sucesso.
+- [ ] Visual está correto (Tailwind).
+- [ ] Mobile funciona.
 
 ---
 
 ## O que NÃO deve ser alterado nesta sprint
 
-- Funcionalidade de nenhuma feature.
-- Layout ou visual.
-- Templates.
-- Configurações visuais.
-- Lógica de negócio.
+- Não alterar templates.ts.
+- Não alterar lógica de importação.
+- Não alterar lógica de exportação além do necessário para npm.
+- Não implementar sanitização (Sprint 2).
+- Não alterar nome do PDF (Sprint 2).
+- Não remover GEMINI_API_KEY (Sprint 5).

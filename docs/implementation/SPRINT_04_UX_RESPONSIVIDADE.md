@@ -1,41 +1,46 @@
-# Sprint 4 — UX, responsividade e melhorias visuais
+# Sprint 4 — UX e Responsividade
+
+Status: PENDENTE
+Depende de: Sprint 1 (recomendado após Sprint 3)
+
+---
 
 ## Objetivo
 
-Implementar loading/progresso na exportação PDF, notificações de sucesso/erro, responsividade mobile (botões Editor/Preview, overlay de configurações) e garantir toolbar com 44px de área de toque.
+Validar e corrigir responsividade mobile (320px), garantir 44px de área de toque em botões, validar notificações de sucesso/erro (5s) e validar spinner no botão de exportar (30s timeout).
 
 ---
 
 ## Impacto UI/UX
 
-**Classificação:** Sim.
+**Classificação:** Sim
 
-Esta sprint altera diretamente a interface: botões, notificações, layout mobile.
+- Responsividade mobile afeta layout completo.
+- Área de toque afeta botões da toolbar.
+- Notificações e spinner são componentes visuais.
 
-- Deve seguir `docs/design/UI_UX_GUIDE.md`.
+- Deve seguir `/docs/design/UI_UX_GUIDE.md`.
 - Deve validar mobile e desktop.
-- Deve prever estados visuais (loading, erro, sucesso).
+- Deve verificar estados de loading, erro e estado vazio.
 - Deve evitar aparência genérica de IA.
 
 ---
 
 ## Escopo da sprint
 
-- Implementar spinner no botão de exportar durante geração do PDF.
-- Desabilitar botão durante geração; prevenir múltiplos cliques.
-- Timeout de 30 segundos com mensagem de erro.
-- Implementar componente de notificação (toast) para sucesso/erro.
-- Implementar alternância Editor/Preview em mobile (< 768px).
-- Implementar overlay/modal de configurações em mobile.
-- Garantir toolbar com >= 44px de área de toque em mobile.
-- Garantir que app funciona em 320px sem scroll horizontal.
+1. Validar responsividade mobile (320px, botões Editor/Preview).
+2. Garantir 44px de área de toque em botões.
+3. Validar notificações de sucesso/erro (5s).
+4. Validar spinner no botão de exportar (30s timeout).
+
+---
 
 ## Fora do escopo
 
-- Alterar templates.
-- Alterar sanitização.
-- Implementar autosave.
-- Alterar regras de negócio.
+- Não alterar templates, presets ou temas.
+- Não alterar sanitização.
+- Não alterar regras de negócio.
+- Não alterar deploy.
 
 ---
 
@@ -43,196 +48,146 @@ Esta sprint altera diretamente a interface: botões, notificações, layout mobi
 
 | Arquivo | Ação | Observação |
 |---|---|---|
-| Componente de exportação/botão | Alterar | Spinner, desabilitar, timeout |
-| Novo componente Toast | Criar | Notificações de sucesso/erro |
-| Header | Alterar | Botões Editor/Preview (mobile) |
-| SettingsPanel | Alterar | Overlay em mobile |
-| Toolbar | Alterar | 44px touch target |
-| CSS/Tailwind | Alterar | Responsividade |
-
-**Nota:** Caminhos são prováveis. Confirmar após Sprint 0.
+| `App.tsx` | Alterar | Layout mobile, notificações, spinner |
+| `Toolbar.tsx` | Alterar | Área de toque 44px |
+| `SettingsPanel.tsx` | Alterar | Área de toque em mobile |
 
 ---
 
 ## Tarefas em ordem
 
-### Tarefa 4.1 — Implementar loading na exportação
+### Tarefa 4.1 — Validar responsividade mobile
 
-**Descrição:** Ao clicar em "Exportar PDF", o botão deve mostrar spinner e texto "Gerando PDF...", ficar desabilitado e prevenir múltiplos cliques. Timeout de 30 segundos.
-
-**Impacto UI/UX:** Sim — altera botão de exportar.
-
-**Arquivos prováveis:**
-- Componente de exportação/botão
-
-**Critério de aceite:**
-- Clicar em exportar → botão mostra spinner e "Gerando PDF...".
-- Botão fica desabilitado durante geração.
-- Múltiplos cliques não disparam múltiplas gerações.
-- Se geração exceder 30s → mensagem de erro.
-- Após conclusão → botão volta ao estado normal.
-
-**Validação:**
-- Clicar em exportar → verificar spinner.
-- Clicar múltiplas vezes → verificar que só gera 1 PDF.
-- Documento muito longo → verificar timeout.
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:**
-- Não alterar a lógica de geração do PDF.
-
----
-
-### Tarefa 4.2 — Implementar notificações (toast)
-
-**Descrição:** Criar componente de notificação toast que mostra mensagens de sucesso/erro e desaparece automaticamente após 5 segundos.
-
-**Impacto UI/UX:** Sim — novo componente visual.
-
-**Arquivos prováveis:**
-- Novo componente `Toast.tsx` ou similar
-
-**Critério de aceite:**
-- Sucesso na exportação → toast positivo com nome do arquivo.
-- Erro na exportação → toast de erro com descrição.
-- Toast desaparece após 5 segundos.
-- Toast não bloqueia a interface.
-
-**Design (seguir UI_UX_GUIDE.md):**
-- Cores: sucesso verde (#15803D), erro vermelho (#B91C1C).
-- Posição: canto superior direito ou inferior.
-- Animação: fade in/out discreto.
-
-**Validação:**
-- Exportar com sucesso → verificar toast.
-- Simular erro → verificar toast.
-- Esperar 5s → verificar desaparecimento.
-
-**Riscos:** Nenhum.
-
-**O que NÃO alterar:**
-- Não alterar comportamento de exportação além de adicionar feedback.
-
----
-
-### Tarefa 4.3 — Implementar responsividade mobile
-
-**Descrição:** Em mobile (< 768px), implementar botões "Editor" / "Preview" no header para alternar entre as áreas. Configurações acessíveis via overlay/modal.
-
-**Impacto UI/UX:** Sim — altera layout mobile.
-
-**Arquivos prováveis:**
-- Header
-- SettingsPanel
-
-**Critério de aceite:**
-- Em mobile (< 768px), botões "Editor" / "Preview" aparecem no header.
-- Clicar em "Editor" mostra o editor.
-- Clicar em "Preview" mostra o preview.
-- Botão de configurações abre overlay/modal.
-- App funciona em tela de 320px sem scroll horizontal.
+**Descrição:**
+Testar o app em mobile (< 768px). Verificar:
+- App abre sem erro em 320px.
+- Editor e preview alternam via botões "Editor" / "Preview" no header.
 - Não há sobreposição de elementos.
+- Não há scroll horizontal obrigatório em 320px.
+- Configurações são acessíveis via overlay/modal.
 
-**Design (seguir UI_UX_GUIDE.md):**
-- Botões com >= 44px de área de toque.
-- Overlay de configurações com botão de fechar.
-- Layout em uma coluna.
+**Impacto UI/UX:** Sim.
+
+**Arquivos prováveis:**
+- `App.tsx`
+- `Toolbar.tsx`
+
+**Critério de aceite:**
+- App funciona em 320px sem scroll horizontal.
+- Botões Editor/Preview alternam corretamente.
+- Configurações acessíveis via overlay.
 
 **Validação:**
-- Abrir DevTools → simular mobile 320px.
-- Verificar botões Editor/Preview.
-- Verificar overlay de configurações.
-- Verificar que não há scroll horizontal.
-
-**Riscos:**
-- Layout pode quebrar em telas muito pequenas.
-
-**O que NÃO alterar:**
-- Não alterar layout desktop (>= 1024px).
+- Abrir DevTools → 320px → testar cada funcionalidade.
 
 ---
 
-### Tarefa 4.4 — Garantir toolbar 44px touch target
+### Tarefa 4.2 — Garantir 44px de área de toque
 
-**Descrição:** Verificar e ajustar botões da toolbar para terem ao menos 44px de área de toque em mobile.
+**Descrição:**
+Verificar que todos os botões interativos têm ao menos 44px de área de toque em mobile. Incluir botões da toolbar, botões de ação e botões de configuração.
 
-**Impacto UI/UX:** Sim — acessibilidade mobile.
+**Impacto UI/UX:** Sim.
 
 **Arquivos prováveis:**
-- Toolbar
+- `Toolbar.tsx`
+- `SettingsPanel.tsx`
 
 **Critério de aceite:**
-- Botões da toolbar >= 44px em mobile.
-- Botões não ficam espremidos.
+- Botões da toolbar ≥ 44px.
+- Botões de ação ≥ 44px.
+- Botões de configuração ≥ 44px.
 
 **Validação:**
-- Inspecionar no DevTools → verificar tamanho dos botões.
+- Inspecionar no DevTools → verificar dimensões.
 
-**Riscos:** Nenhum.
+---
 
-**O que NÃO alterar:**
-- Não alterar funcionalidade da toolbar.
+### Tarefa 4.3 — Validar notificações de sucesso/erro
+
+**Descrição:**
+Verificar que notificações de sucesso/erro aparecem e desaparecem após 5 segundos. Incluir notificação de importação e exportação.
+
+**Impacto UI/UX:** Sim.
+
+**Arquivos prováveis:**
+- `App.tsx`
+
+**Critério de aceite:**
+- Notificação de sucesso aparece ao exportar.
+- Notificação de erro aparece se exportação falhar.
+- Notificação desaparece após 5 segundos.
+
+**Validação:**
+- Exportar PDF → verificar notificação.
+- Esperar 5s → verificar que desaparece.
+
+---
+
+### Tarefa 4.4 — Validar spinner no botão de exportar
+
+**Descrição:**
+Verificar que o botão de exportar mostra spinner e fica desabilitado durante geração. Múltiplos cliques não devem disparar múltiplas gerações. Timeout de 30s com mensagem de erro.
+
+**Impacto UI/UX:** Sim.
+
+**Arquivos prováveis:**
+- `App.tsx`
+
+**Critério de aceite:**
+- Botão mostra spinner durante geração.
+- Botão fica desabilitado.
+- Múltiplos cliques não disparam múltiplas gerações.
+- Timeout de 30s com mensagem de erro.
+
+**Validação:**
+- Clicar exportar → verificar spinner.
+- Clicar múltiplas vezes → verificar que não duplica.
 
 ---
 
 ## Comandos de validação da sprint
 
 ```bash
-# Build
+npx tsc --noEmit
 npm run build
-
-# Preview local
-npm run preview
+npm run dev
 ```
 
 ---
 
 ## Testes necessários
 
-- **Testes manuais:** Loading, notificações, mobile, toolbar.
-- **Testes de responsividade:** 320px, 768px, 1024px.
-- **Testes de regressão:** Funcionalidades existentes continuam.
-
----
-
-## Fluxo manual de validação
-
-1. Abrir app no desktop.
-2. Clicar em exportar → verificar spinner e botão desabilitado.
-3. Verificar toast de sucesso após exportação.
-4. Abrir DevTools → simular mobile 320px.
-5. Verificar botões Editor/Preview no header.
-6. Alternar entre Editor e Preview.
-7. Abrir configurações via overlay.
-8. Verificar toolbar com botões >= 44px.
-9. Exportar PDF em mobile.
+- [ ] App funciona em 320px.
+- [ ] Botões Editor/Preview alternam.
+- [ ] Botões ≥ 44px.
+- [ ] Notificações 5s.
+- [ ] Spinner exportar.
+- [ ] Timeout 30s.
+- [ ] Build funciona.
 
 ---
 
 ## Riscos da sprint
 
-- Layout mobile pode ter edge cases em telas muito pequenas.
-- Overlay de configurações pode não funcionar bem em todos os navegadores mobile.
+- **MÉDIO:** Layout mobile pode quebrar em telas muito pequenas.
+- **BAIXO:** 44px pode conflitar com design atual.
 
 ---
 
 ## Critérios finais de aceite da sprint
 
-- [ ] Botão de exportar mostra spinner e fica desabilitado.
-- [ ] Timeout de 30s funciona.
-- [ ] Toast de sucesso/erro funciona.
-- [ ] Botões Editor/Preview funcionam em mobile.
-- [ ] Configurações acessíveis via overlay em mobile.
-- [ ] Toolbar >= 44px em mobile.
 - [ ] App funciona em 320px sem scroll horizontal.
-- [ ] Build completa sem erros.
+- [ ] Botões ≥ 44px.
+- [ ] Notificações funcionam (5s).
+- [ ] Spinner funciona.
+- [ ] Build e typecheck passam.
 
 ---
 
 ## O que NÃO deve ser alterado nesta sprint
 
-- Templates.
-- Sanitização.
-- Regras de negócio (numeração, `---`, etc.).
-- Exportação PDF além do feedback visual.
+- Não alterar templates, presets ou temas.
+- Não alterar sanitização.
+- Não alterar regras de negócio.
+- Não alterar deploy.
