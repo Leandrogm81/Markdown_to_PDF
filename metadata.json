@@ -1,0 +1,8 @@
+{
+  "name": "Markdown para PDF",
+  "description": "Um aplicativo web simples e elegante para converter seu texto em Markdown em um arquivo PDF para download. Possui uma visualização ao vivo do Markdown renderizado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown para PDF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          typography: (theme) => ({
+            DEFAULT: {
+              css: {
+                color: theme('colors.gray.700'),
+                a: {
+                  color: theme('colors.blue.500'),
+                  '&:hover': {
+                    color: theme('colors.blue.700'),
+                  },
+                },
+              },
+            },
+            invert: {
+              css: {
+                color: theme('colors.gray.300'),
+                 a: {
+                  color: theme('colors.blue.400'),
+                  '&:hover': {
+                    color: theme('colors.blue.600'),
+                  },
+                },
+              }
+            }
+          }),
+        },
+      },
+      plugins: [
+        require('@tailwindcss/typography'),
+      ],
+    }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
