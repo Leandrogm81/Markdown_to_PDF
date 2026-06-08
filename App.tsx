@@ -28,25 +28,8 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { A4DocPreview } from './components/A4DocPreview';
 import { extractHeuristics } from './utils/heuristics';
 
-// TypeScript declarations for libraries loaded via CDN
-declare const html2canvas: (element: HTMLElement, options?: any) => Promise<HTMLCanvasElement>;
-declare const jspdf: {
-  jsPDF: new (options?: {
-    orientation?: 'p' | 'portrait' | 'l' | 'landscape';
-    unit?: 'mm' | 'pt' | 'px' | 'in' | 'cm';
-    format?: string | number[];
-  }) => {
-    addPage: () => void;
-    addImage: (imageData: string, format: string, x: number, y: number, width: number, height: number) => void;
-    save: (filename: string) => void;
-    internal: {
-      pageSize: {
-        getWidth: () => number;
-        getHeight: () => number;
-      };
-    };
-  };
-};
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const DEFAULT_CONFIG: DocumentConfig = {
   coverPage: {
@@ -261,7 +244,7 @@ const App: React.FC = () => {
       const isPortrait = config.layout.orientation === 'portrait';
       const isA4 = config.layout.pageSize === 'A4';
 
-      const pdf = new jspdf.jsPDF({
+      const pdf = new jsPDF({
         orientation: isPortrait ? 'p' : 'l',
         unit: 'mm',
         format: isA4 ? 'a4' : 'letter',

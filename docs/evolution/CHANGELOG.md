@@ -1,5 +1,133 @@
 # CHANGELOG
 
+## 2026-06-08 — Sprint 1 concluída: migração de CDNs completa
+
+### Resumo
+Sprint 1 (Migração de Dependências) concluída com sucesso (7/7 tarefas). Todas as CDNs removidas do index.html (jspdf, html2canvas, Tailwind, import maps). Strict mode habilitado no TypeScript. Erros de tipo corrigidos com @types/react e @types/react-dom. Build OK, 22 testes OK, typecheck OK.
+
+### Arquivos afetados
+- `index.html` (import maps removidos)
+- `tsconfig.json` (strict mode habilitado)
+- `package.json` (@types/react, @types/react-dom adicionados como devDependencies)
+- `components/A4DocPreview.tsx` (cast `marked.parse(section) as string`)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/HANDOFF.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Completar a migração de CDNs para npm e habilitar strict mode para melhor qualidade de código.
+
+### Evidência
+- `npm run build` → OK
+- `npm test` → 22 testes passando
+- `npx tsc --noEmit` → OK (strict mode)
+- `grep -c "importmap" index.html` → 0
+- `grep -c "aistudiocdn" index.html` → 0
+
+---
+
+## 2026-06-07 — Todas as 5 sprints quebradas em tarefas executáveis
+
+### Resumo
+Sprints 1-5 quebradas em 25 tarefas totais (7+5+4+4+5). Arquivos SPRINT_*_TAREFAS.md gerados. Sprint 1 encontrada parcialmente feita (3/7 tarefas) e nao commitada. HANDOFF, CURRENT_STATE e next-actions atualizados.
+
+### Arquivos afetados
+- `docs/implementation/SPRINT_01_MIGRACAO_DEPS_TAREFAS.md` (criado)
+- `docs/implementation/SPRINT_02_SANITIZACAO_NOME_TAREFAS.md` (criado)
+- `docs/implementation/SPRINT_03_REGRAS_NEGOCIO_TAREFAS.md` (criado)
+- `docs/implementation/SPRINT_04_UX_RESPONSIVIDADE_TAREFAS.md` (criado)
+- `docs/implementation/SPRINT_05_DEPLOY_VALIDACAO_TAREFAS.md` (criado)
+- `docs/agent/HANDOFF.md` (atualizado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/next-actions.md` (atualizado)
+
+### Motivo
+Preparar todas as sprints para execucao por modelo coder economico. Atualizar continuidade.
+
+### Evidencia
+25 arquivos de tarefas gerados. Sprint 1 com mudancas nao commitadas verificada (build OK, testes OK).
+
+---
+## 2026-06-07 — Sprint 5 quebrada em tarefas executáveis
+
+### Resumo
+Sprint 5 (Deploy e Validacao) quebrada em 5 tarefas. vite.config.ts analisado: GEMINI_API_KEY exposta nas linhas 15-16. index.html sem meta tags. Nao ha vercel.json nem pasta public/.
+
+### Arquivos afetados
+- `docs/implementation/SPRINT_05_DEPLOY_VALIDACAO_TAREFAS.md` (criado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+
+### Motivo
+Preparar Sprint 5 para execucao. Todas as 5 sprints agora quebradas.
+
+### Evidencia
+Arquivo de tarefas gerado com 5 tarefas.
+
+---
+## 2026-06-07 — Sprint 4 quebrada em tarefas executáveis
+
+### Resumo
+Sprint 4 (UX e Responsividade) quebrada em 4 tarefas. App.tsx analisado: spinner existe (linha 408), disabled existe (linha 402), notificacoes com 5s ja implementadas (linhas 287, 292), mas timeout 30s nao existe.
+
+### Arquivos afetados
+- `docs/implementation/SPRINT_04_UX_RESPONSIVIDADE_TAREFAS.md` (criado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+
+### Motivo
+Preparar Sprint 4 para execucao por modelo coder economico.
+
+### Evidencia
+Arquivo de tarefas gerado com 4 tarefas independentes.
+
+---
+## 2026-06-07 — Sprint 3 quebrada em tarefas executáveis
+
+### Resumo
+Sprint 3 (Regras de Negocio) quebrada em 4 tarefas independentes. A4DocPreview.tsx analisado para identificar logica de split (linha 90) e numeracao (linhas 505, 740). FileReader sem encoding identificado (App.tsx linha 160).
+
+### Arquivos afetados
+- `docs/implementation/SPRINT_03_REGRAS_NEGOCIO_TAREFAS.md` (criado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+
+### Motivo
+Preparar Sprint 3 para execucao por modelo coder economico.
+
+### Evidencia
+Arquivo de tarefas gerado com 4 tarefas independentes.
+
+---
+## 2026-06-07 — Sprint 2 quebrada em tarefas executáveis
+
+### Resumo
+Sprint 2 (Sanitizacao e Nome do PDF) quebrada em 5 tarefas. Arquivo SPRINT_02_SANITIZACAO_NOME_TAREFAS.md gerado. PRD secao 7.10 consultada para regra de sanitizacao do nome.
+
+### Arquivos afetados
+- `docs/implementation/SPRINT_02_SANITIZACAO_NOME_TAREFAS.md` (criado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+
+### Motivo
+Preparar Sprint 2 para execucao por modelo coder economico.
+
+### Evidencia
+Arquivo de tarefas gerado com 5 tarefas, prompts de execucao, criterios de aceite e checklist final.
+
+---
+## 2026-06-07 — Sprint 1 quebrada em tarefas executáveis
+
+### Resumo
+Sprint 1 (Migração de Dependências) quebrada em 7 tarefas menores, sequenciais e verificáveis. Arquivo SPRINT_01_MIGRACAO_DEPS_TAREFAS.md gerado. Achado: marked já está via npm (tarefa 1.1 do sprint original estava desatualizada).
+
+### Arquivos afetados
+- `docs/implementation/SPRINT_01_MIGRACAO_DEPS_TAREFAS.md` (criado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+
+### Motivo
+Preparar Sprint 1 para execução por modelo coder econômico. Cada tarefa é pequena, reversível e tem critérios de aceite objetivos.
+
+### Evidência
+Arquivo de tarefas gerado com 7 tarefas, prompts de execução, critérios de aceite e checklist final.
+
+---
 ## 2026-06-07 — Sprint 00B concluída: fundação de testes
 
 ### Resumo

@@ -2,144 +2,151 @@
 
 ## 1. Objetivo atual
 
-Estabilizar o protótipo `markdown-para-pdf` (Vite + React 19 + TypeScript) como MVP pronto para deploy na Vercel. O plano de implementação v2.0 está completo com 7 sprints (Sprint 0 e 00B concluídas). Próximo passo é executar Sprint 1 (migrar CDNs para npm).
+Estabilizar o protótipo `markdown-para-pdf` (Vite + React 19 + TypeScript) como MVP pronto para deploy na Vercel. Sprint 1 (migração de CDNs) concluída. Sprints 2-5 quebradas em tarefas mas não iniciadas.
 
 ## 2. Estado geral do projeto
 
 - Projeto: `/mnt/c/Dev/markdown-para-pdf`
 - Stack: Vite + React 19 + TypeScript, sem backend
-- Git: inicializado, último commit `3e9b027` (Sprint 00B concluída)
-- Testes: Vitest + RTL configurados, 22 testes passando
-- Build: `npm run build` OK, `npx tsc --noEmit` OK
+- Git: último commit inclui Sprint 1 completa
+- Testes: Vitest + RTL, 22 testes passando
+- Build: `npm run build` OK, `npx tsc --noEmit` OK (strict mode), `npm test` OK
 - PRD v1.1 consolidado (1249 linhas) em `docs/product/PRD_v1.1.md`
-- Plano de implementação v2.0 em `docs/implementation/` (10 arquivos)
-- Todos os PDs resolvidos (11 decisões ativas em DECISIONS.md)
-- Sprint 0 (mapeamento) e Sprint 00B (testes) concluídas
-- Sprint 1 (migração de CDNs) pendente — bloqueante para todo o resto
+- Plano de implementação v2.0 com 7 sprints (Sprints 0, 00B e 1 concluídas)
+- Todas as 5 sprints quebradas em tarefas executáveis (25 tarefas total)
+- Sprint 1 completa (7/7 tarefas)
 
 ## 3. O que já foi feito
 
-- Brownfield analysis, Pré-PRD, PRD v1.0, PRD v1.1 — todos salvos em `docs/product/`
+- Brownfield analysis, Pré-PRD, PRD v1.0, PRD v1.1 — todos em `docs/product/`
 - Revisão crítica do PRD (4 críticos, 18 importantes resolvidos)
 - Guia UI/UX criado em `docs/design/UI_UX_GUIDE.md` (17 seções)
 - Plano de implementação v2.0 gerado (7 sprints, 37 tarefas)
-- 11 PDs resolvidos e registrados em `docs/evolution/DECISIONS.md` (19 decisões ativas)
-- Sprint 0 executada: codebase mapeada, git inicializado, .gitignore corrigido
-- Sprint 00B executada: Vitest + RTL configurados, 22 smoke tests passando
-- Codebase map detalhado em `docs/implementation/Sprint-0-codebase-map.md`
+- 11 PDs resolvidos (19 decisões ativas em DECISIONS.md)
+- Sprint 0 executada: codebase mapeada, git inicializado
+- Sprint 00B executada: Vitest + RTL, 22 smoke tests
+- Todas as 5 sprints quebradas em tarefas (arquivos `SPRINT_*_TAREFAS.md`)
+- Sprint 1 completa: jspdf, html2canvas, Tailwind migrados de CDN para npm; import maps removidos; strict mode habilitado; erros de tipo corrigidos
 
-## 4. Decisões tomadas
+## 4. Sprint 1 — Concluída
+
+### Tarefas executadas
+- **Tarefa 1.1** ✅ jspdf migrado: `npm install jspdf`, `import { jsPDF } from 'jspdf'` em App.tsx
+- **Tarefa 1.2** ✅ html2canvas migrado: `npm install html2canvas`, `import html2canvas from 'html2canvas'` em App.tsx
+- **Tarefa 1.3** ✅ Tailwind migrado: `npm install tailwindcss @tailwindcss/vite`, plugin em vite.config.ts, `index.css` com `@import "tailwindcss"`
+- **Tarefa 1.4** ✅ Import maps removidos: bloco `<script type="importmap">` removido do index.html
+- **Tarefa 1.5** ✅ Strict mode habilitado: `"strict": true` no tsconfig.json
+- **Tarefa 1.6** ✅ Erros de tipo corrigidos: `@types/react`, `@types/react-dom` instalados; `marked.parse(section) as string` em A4DocPreview.tsx
+- **Tarefa 1.7** ✅ Validação final: build OK, 22 testes OK, typecheck OK
+
+### Verificações finais
+- `npm run build` → OK (chunk warning 921KB, não bloqueante)
+- `npm test` → 22 testes passando
+- `npx tsc --noEmit` → OK (strict mode ativo)
+- `grep -c "importmap" index.html` → 0
+- `grep -c "aistudiocdn" index.html` → 0
+- `grep -c "strict" tsconfig.json` → 1
+
+## 5. Decisões tomadas
 
 - 2026-06-07 — Autosave local NÃO no MVP
 - 2026-06-07 — Tamanho máximo importação: 8MB
 - 2026-06-07 — Confirmação antes de substituir conteúdo: SIM
-- 2026-06-07 — Manter 5 presets de estilo existentes
-- 2026-06-07 — Manter 4 temas de capa existentes
-- 2026-06-07 — Manter 4 templates existentes
-- 2026-06-07 — Manter 7 heurísticas existentes
+- 2026-06-07 — Manter 5 presets, 4 temas de capa, 4 templates, 7 heurísticas
 - 2026-06-07 — Sem limite de tamanho/páginas do PDF
 - 2026-06-07 — DOMPurify como sanitização
 - 2026-06-07 — Sem tema escuro no MVP
-- 2026-06-07 — Vitest + React Testing Library como framework de testes
+- 2026-06-07 — Vitest + RTL como framework de testes
+- 2026-06-07 — marked já via npm
+- 2026-06-07 — @types/react e @types/react-dom como devDependencies
 
-## 5. Arquivos importantes
+## 6. Arquivos importantes
 
 | Arquivo | Função | Observação |
 |---|---|---|
 | `docs/product/PRD_v1.1.md` | PRD consolidado | Fonte principal (1249 linhas) |
 | `docs/design/UI_UX_GUIDE.md` | Guia visual obrigatório | 17 seções |
-| `docs/implementation/implementation-plan.md` | Plano geral v2.0 | 7 sprints, 37 tarefas |
-| `docs/implementation/SPRINT_01_MIGRACAO_DEPS.md` | Próxima sprint | 7 tarefas, bloqueante |
-| `docs/implementation/Sprint-0-codebase-map.md` | Mapa do codebase | 11 achados críticos |
-| `docs/implementation/task-list.md` | Lista de tarefas | 37 tarefas por sprint |
-| `docs/implementation/test-plan.md` | Plano de testes | Vitest + RTL |
-| `docs/implementation/sprint-breakdown.md` | Dependências | Diagrama de sprints |
-| `docs/evolution/DECISIONS.md` | 19 decisões ativas | Todas os PDs resolvidos |
-| `docs/evolution/CHANGELOG.md` | Histórico | 12 entradas |
+| `docs/implementation/implementation-plan.md` | Plano geral v2.0 | 7 sprints |
+| `docs/implementation/SPRINT_01_MIGRACAO_DEPS_TAREFAS.md` | Tarefas Sprint 1 | 7 tarefas — CONCLUÍDA |
+| `docs/implementation/SPRINT_02_SANITIZACAO_NOME_TAREFAS.md` | Tarefas Sprint 2 | 5 tarefas — PRÓXIMA |
+| `docs/implementation/SPRINT_03_REGRAS_NEGOCIO_TAREFAS.md` | Tarefas Sprint 3 | 4 tarefas |
+| `docs/implementation/SPRINT_04_UX_RESPONSIVIDADE_TAREFAS.md` | Tarefas Sprint 4 | 4 tarefas |
+| `docs/implementation/SPRINT_05_DEPLOY_VALIDACAO_TAREFAS.md` | Tarefas Sprint 5 | 5 tarefas |
+| `docs/evolution/DECISIONS.md` | 19 decisões ativas | Todos os PDs resolvidos |
+| `docs/evolution/CHANGELOG.md` | Histórico | 17 entradas |
 | `docs/agent/agent-operating-rules.md` | Regras operacionais | Deve ser lido antes de agir |
-| `vite.config.ts` | Config Vite + Vitest | GEMINI_API_KEY exposta (Sprint 5 resolve) |
-| `package.json` | Dependências + scripts | test/test:watch disponíveis |
+| `vite.config.ts` | Config Vite + Tailwind | Plugin tailwindcss adicionado |
+| `index.html` | HTML principal | Sem CDN, sem import maps |
+| `index.css` | CSS principal | `@import "tailwindcss"` |
+| `package.json` | Dependências | jspdf, html2canvas, tailwindcss, @types/react, @types/react-dom |
+| `App.tsx` | Componente principal | imports de jspdf/html2canvas migrados |
+| `tsconfig.json` | Config TS | strict mode ativo |
 
-## 6. Problemas encontrados
+## 7. Problemas encontrados
 
-- CDNs em runtime (Tailwind, marked, jspdf, html2canvas) — Sprint 1 resolve
-- Import maps apontam para aistudiocdn.com — Sprint 1 resolve
-- tsconfig.json sem `strict: true` — Sprint 1 resolve
-- GEMINI_API_KEY exposta em vite.config.ts — Sprint 5 resolve
-- HTML renderizado sem sanitização (XSS) — Sprint 2 resolve
-- App.tsx (666 linhas) e A4DocPreview.tsx (757 linhas) são grandes — Futuro
-- Sem testes de componente (apenas smoke tests de funções puras) — Futuro
+- Chunk size warning no build (921KB) — não bloqueante, pode ser otimizado com code splitting depois.
+- Nenhum erro de tipo restante após correções.
 
-## 7. Tentativas realizadas
+## 8. Tentativas realizadas
 
 | Tentativa | Resultado | Observação |
 |---|---|---|
-| Gerar plano de implementação v1.0 | Funcionou | Substituído por v2.0 com PDs resolvidos |
-| Gerar plano de implementação v2.0 | Funcionou | 7 sprints, 37 tarefas, PDs incorporados |
-| Configurar Vitest + RTL | Funcionou | 22 testes passando, build OK |
-| Resolver PDs com usuário | Funcionou | 11 decisões registradas |
+| Migrar jspdf CDN → npm | Funcionou | Tarefa 1.1 |
+| Migrar html2canvas CDN → npm | Funcionou | Tarefa 1.2 |
+| Migrar Tailwind CDN → npm | Funcionou | Tarefa 1.3 |
+| Remover import maps | Funcionou | Tarefa 1.4 |
+| Habilitar strict mode | Funcionou | Tarefa 1.5 |
+| Corrigir erros de tipo | Funcionou | Tarefa 1.6 (@types/react, cast marked.parse) |
+| Validação final | Funcionou | Tarefa 1.7 (build, testes, typecheck OK) |
 
-## 8. O que funcionou
+## 9. O que funcionou
 
-- Mapeamento completo da codebase antes de implementar.
-- Resolução de todos os PDs antes de gerar plano.
-- Vitest nativo do Vite — configuração mínima, sem conflitos.
-- Smoke tests para heurísticas e constantes — validam funções puras.
+- Migração de CDN para npm (jspdf, html2canvas, Tailwind).
+- Remoção de import maps sem quebrar o app.
+- Habilitação de strict mode com correção mínima de tipos.
+- Instalação de @types/react e @types/react-dom para resolver erros de JSX.
 
-## 9. O que não funcionou
+## 10. O que não funcionou
 
-- Nenhum problema técnico nesta sessão.
+- Nenhum problema técnico na Sprint 1.
 
-## 10. Pendências
+## 11. Pendências
 
 | Pendência | Impacto | Prioridade |
 |---|---|---|
-| Sprint 1: migrar CDNs para npm | Bloqueante para todas as outras sprints | Alta |
-| Sprint 2: sanitização DOMPurify | Segurança (XSS) | Alta |
-| Sprint 3: regras de negócio | `---` em code blocks, preview vazio, numeração | Média |
-| Sprint 4: UX e responsividade | Mobile, notificações | Média |
-| Sprint 5: deploy Vercel | GEMINI_API_KEY, meta tags | Média |
-| GEMINI_API_KEY exposta | Segurança | Alta (Sprint 5) |
+| Executar Sprint 2 (5 tarefas) | Segurança (XSS) | Alta |
+| Executar Sprint 3 (4 tarefas) | Regras de negócio | Média |
+| Executar Sprint 4 (4 tarefas) | UX | Média |
+| Executar Sprint 5 (5 tarefas) | Deploy | Média |
 
-## 11. Riscos
+## 12. Riscos
 
 | Risco | Área | Severidade | Observação |
 |---|---|---|---|
-| Migração Tailwind CDN → npm pode quebrar CSS | Engenharia | Alta | Sprint 1, tarefa 1.4 |
-| marked API pode diferir entre CDN e npm | Engenharia | Alta | Sprint 1, tarefa 1.1 |
-| strict mode pode revelar muitos erros de tipo | Engenharia | Média | Sprint 1, tarefa 1.7 |
-| DOMPurify whitelist pode ser muito restritiva | Engenharia | Média | Sprint 2, tarefa 2.2 |
-| `---` em code blocks pode ser difícil de detectar | Engenharia | Média | Sprint 3, tarefa 3.1 |
-| Layout mobile pode quebrar em 320px | UI/UX | Média | Sprint 4, tarefa 4.1 |
+| Chunk size 921KB | Performance | BAIXA | Pode ser otimizado com code splitting |
+| DOMPurify whitelist pode ser restritiva | Engenharia | MÉDIA | Sprint 2 |
+| Layout mobile pode quebrar em 320px | UI/UX | MÉDIA | Sprint 4 |
 
-## 12. Próxima ação recomendada
+## 13. Próxima ação recomendada
 
-Executar Sprint 1: migrar marked, jspdf, html2canvas e Tailwind de CDN para npm. Esta sprint é bloqueante para todas as outras.
+1. Executar Sprint 2 (Sanitização + Nome do PDF).
+2. Ler `docs/implementation/SPRINT_02_SANITIZACAO_NOME_TAREFAS.md` antes de começar.
+3. Seguir a ordem das tarefas (2.1 a 2.5).
 
-Tarefas da Sprint 1:
-1. Instalar marked via npm, remover CDN, converter para import
-2. Instalar jspdf via npm, remover CDN, converter para import
-3. Instalar html2canvas via npm, remover CDN, converter para import
-4. Instalar Tailwind via npm (@tailwindcss/vite), remover CDN
-5. Remover import maps do index.html
-6. Habilitar `strict: true` no tsconfig.json
-7. Corrigir erros de tipo do strict mode
-
-## 13. O que o próximo agente NÃO deve fazer
+## 14. O que o próximo agente NÃO deve fazer
 
 - Não recomeçar PRD, plano ou guia UI/UX.
-- Não pular a migração de CDNs (Sprint 1 é bloqueante).
-- Não implementar funcionalidades antes de completar Sprint 1.
-- Não ignorar erros de tipo do strict mode.
+- Não re-quebrar sprints já quebradas.
 - Não criar novos templates, presets ou temas (PDs resolvidos).
 - Não adicionar autosave (PD-01: NÃO).
 - Não adicionar tema escuro (PD-11: NÃO).
-- Não usar CDN para nenhuma dependência — tudo deve ser npm.
+- Não usar CDN — tudo deve ser npm.
 - Não alterar o PRD v1.1 sem justificativa.
 - Não ignorar `docs/design/UI_UX_GUIDE.md` para decisões visuais.
+- Não executar tarefas sem autorização do usuário.
 
-## 14. Segurança para troca de sessão
+## 15. Segurança para troca de sessão
 
 - Seguro rodar `/new`? Sim
-- Motivo: Sprints 0 e 00B concluídas, 22 testes passando, build OK, typecheck OK, todos os PDs resolvidos, plano v2.0 completo, continuidade atualizada.
-- Nome sugerido para a nova sessão: `markdown-para-pdf-sprint-1-migracao-cdns`
+- Motivo: Sprint 1 completa e commitada. Próximo agente deve iniciar Sprint 2.
+- Nome sugerido para a nova sessão: `markdown-para-pdf-sprint-2-sanitizacao`

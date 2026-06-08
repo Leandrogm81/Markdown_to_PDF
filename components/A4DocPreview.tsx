@@ -1,10 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { DocumentConfig, PresetType, MarginSize } from '../types';
 import { STYLE_PRESETS, MARGINS, FONT_SIZES, LINE_HEIGHTS } from '../styles';
-
-declare const marked: {
-  parse(markdown: string): string;
-};
+import { marked } from 'marked';
 
 export const getCommonStyles = (selectorPrefix: string, alignmentSetting: string, activeHeadingColor: string) => {
   const alignmentCSS = alignmentSetting === 'justify' ? 'justify' : 'left';
@@ -99,7 +96,7 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
     return sections.map((section) => {
       if (typeof marked !== 'undefined') {
         try {
-          return marked.parse(section);
+          return marked.parse(section) as string;
         } catch (e) {
           console.error("Erro ao processar markdown", e);
           return `<p>Erro ao formatar bloco: ${section}</p>`;
