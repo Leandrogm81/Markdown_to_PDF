@@ -2,30 +2,33 @@
 
 ## 1. Objetivo atual
 
-MVP `markdown-para-pdf` completo e pronto para deploy na Vercel. Todas as 5 sprints de implementação concluídas. Próximo passo é fazer push e deploy.
+MVP `markdown-para-pdf` completo e em produção na Vercel. Pacote de evidências para auditoria gerado (`docs/audit/AUDIT_EVIDENCE.md`). Próximo passo: atualizar og:url, ajustar AUDIT_EVIDENCE.md com evidências de deploy, e realizar auditoria final.
 
 ## 2. Estado geral do projeto
 
 - Projeto: `/mnt/c/Dev/markdown-para-pdf`
 - Stack: Vite + React 19 + TypeScript, sem backend
-- Git: branch `main`, 6 commits de sprint (076db72..10559aa), working directory limpo
+- Git: branch `main`, 16 commits (3ff58a7..773d805), working directory limpo
 - Testes: Vitest + RTL, 22 testes passando
 - Build: `npm run build` OK, `npx tsc --noEmit` OK (strict mode), `npm test` OK
-- Dev server: localhost:3000 testado e funcionando
+- Deploy: Vercel — app rodando em `https://markdown-to-pdf-alpha.vercel.app/`
+- AUDIT_EVIDENCE.md: 759 linhas, 23 seções, pacote completo de evidências
 - PRD v1.1 consolidado em `docs/product/PRD_v1.1.md` (1249 linhas)
 - 7 sprints concluídas (Sprints 0, 00B, 1, 2, 3, 4, 5)
 - 25 tarefas de implementação concluídas
-- GEMINI_API_KEY removida, meta tags configuradas, vercel.json criado
+- 19 decisões ativas em DECISIONS.md
 
 ## 3. O que já foi feito
 
 - **Sprint 0**: Mapeamento da codebase, git inicializado (commit 3ff58a7)
 - **Sprint 00B**: Vitest + RTL configurados, 22 smoke tests
-- **Sprint 1** (7/7): jspdf, html2canvas, Tailwind migrados de CDN para npm. Import maps removidos. Strict mode habilitado. @types/react, @types/react-dom instalados.
-- **Sprint 2** (5/5): DOMPurify sanitização com whitelist. Nome do PDF descritivo (PRD 7.10). Validação 8MB importação. Modal de confirmação antes de substituir conteúdo.
-- **Sprint 3** (4/4): `---` em code blocks não cria quebra de página. Preview vazio com mensagem orientativa. Numeração de página exclui capa (1-based, centralizada). Encoding UTF-8 BOM + Latin-1 fallback.
-- **Sprint 4** (4/4): Header responsivo 320px. Botões com 44px área de toque. Notificações 5s validadas. Timeout 30s na geração de PDF.
-- **Sprint 5** (5/5): GEMINI_API_KEY removida do vite.config.ts. Meta tags (title, description, OG, theme-color). Favicon SVG. vercel.json SPA redirect. Build de produção validado.
+- **Sprint 1** (7/7): jspdf, html2canvas, Tailwind migrados de CDN para npm. Import maps removidos. Strict mode habilitado.
+- **Sprint 2** (5/5): DOMPurify sanitização com whitelist. Nome do PDF descritivo. Validação 8MB importação. Modal de confirmação.
+- **Sprint 3** (4/4): `---` em code blocks não cria quebra de página. Preview vazio com mensagem. Numeração de página exclui capa. Encoding UTF-8 BOM + Latin-1 fallback.
+- **Sprint 4** (4/4): Header responsivo 320px. Botões com 44px área de toque. Notificações 5s. Timeout 30s na geração de PDF.
+- **Sprint 5** (5/5): GEMINI_API_KEY removida. Meta tags + favicon. vercel.json SPA redirect. Build de produção validado.
+- **Deploy**: Vercel — app rodando em `https://markdown-to-pdf-alpha.vercel.app/`
+- **AUDIT_EVIDENCE.md**: Pacote de evidências gerado com 23 seções (759 linhas)
 
 ## 4. Decisões tomadas
 
@@ -47,6 +50,7 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 
 | Arquivo | Função | Observação |
 |---|---|---|
+| `docs/audit/AUDIT_EVIDENCE.md` | Pacote de evidências para auditoria | 759 linhas, 23 seções |
 | `docs/product/PRD_v1.1.md` | PRD consolidado | Fonte principal (1249 linhas) |
 | `docs/design/UI_UX_GUIDE.md` | Guia visual obrigatório | 17 seções |
 | `docs/implementation/SPRINT_*_TAREFAS.md` | Tarefas por sprint | 5 arquivos, todos concluídos |
@@ -56,18 +60,17 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 | `vercel.json` | SPA redirect | Configurado para Vercel |
 | `public/favicon.svg` | Favicon do app | SVG azul com ícone de documento |
 | `vite.config.ts` | Config Vite | Sem GEMINI_API_KEY, com Tailwind plugin |
-| `index.html` | HTML principal | Meta tags, favicon, sem CDNs |
+| `index.html` | HTML principal | Meta tags, favicon, og:url placeholder |
 | `package.json` | Dependências | jspdf, html2canvas, tailwindcss, dompurify, marked |
-| `App.tsx` | Componente principal | 788 linhas, todas as features do MVP |
+| `App.tsx` | Componente principal | 789 linhas, todas as features do MVP |
 | `components/A4DocPreview.tsx` | Preview A4 | DOMPurify, empty state, numeração correta |
 | `components/Toolbar.tsx` | Toolbar | Botões 44px, encoding, validação 8MB |
-| `tsconfig.json` | Config TS | strict mode ativo |
 
 ## 6. Problemas encontrados
 
-- Chunk size warning no build (921KB) — não bloqueante, pode ser otimizado com code splitting
-- URL no og:url é placeholder (`https://markdown-para-pdf.vercel.app`) — ajustar após deploy
-- `_migrate_tailwind.py` arquivo temporário no working directory (pode ser deletado)
+- Chunk size warning no build (953KB) — não bloqueante, pode ser otimizado depois
+- og:url é placeholder (`https://markdown-para-pdf.vercel.app`) — URL real é `https://markdown-to-pdf-alpha.vercel.app/`
+- Testes insuficientes (apenas 22 smoke tests) — sem testes de componente, integração, e2e
 
 ## 7. Tentativas realizadas
 
@@ -87,7 +90,9 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 | Timeout 30s PDF | Funcionou | clearTimeout no finally |
 | Remover GEMINI_API_KEY | Funcionou | loadEnv removido |
 | Meta tags + favicon | Funcionou | OG, description, theme-color |
-| vercel.json SPA | Funcionado | Rewrites para index.html |
+| vercel.json SPA | Funcionou | Rewrites para index.html |
+| Deploy na Vercel | Funcionou | App rodando em produção |
+| AUDIT_EVIDENCE.md | Funcionou | 759 linhas, 23 seções |
 
 ## 8. O que funcionou
 
@@ -97,37 +102,38 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 - DOMPurify com whitelist configurada.
 - Placeholder para proteger `---` em code blocks.
 - Timeout com clearTimeout no finally.
+- Deploy na Vercel como site estático SPA.
+- Pacote de evidências para auditoria com 23 seções estruturadas.
 
 ## 9. O que não funcionou
 
 - Nenhum problema técnico nas sprints 1-5.
+- Deploy funcionou sem problemas.
 
 ## 10. Pendências
 
 | Pendência | Impacto | Prioridade |
 |---|---|---|
-| Git push para repositório remoto | Deploy | Alta |
-| Conectar repo ao Vercel | Deploy | Alta |
-| Validar app em produção | Produto | Alta |
-| Ajustar og:url com URL real | SEO | Média |
-| Otimizar chunk size (code splitting) | Performance | Baixa |
-| Deletar _migrate_tailwind.py | Higiene | Baixa |
+| Atualizar og:url para URL real do Vercel | SEO/OG não funcional | Média |
+| git push com og:url atualizado | Sincronizar repositório | Média |
+| Atualizar AUDIT_EVIDENCE.md com evidências de deploy | Auditoria incompleta sem evidência de produção | Média |
+| Otimizar chunk size (code splitting) | Performance de carregamento | Baixa |
 
 ## 11. Riscos
 
 | Risco | Área | Severidade | Observação |
 |---|---|---|---|
-| Chunk size 921KB | Performance | BAIXA | Pode ser otimizado depois |
-| og:url placeholder | SEO | MÉDIA | Ajustar após deploy |
-| DOMPurify whitelist restritiva | Engenharia | BAIXA | Pode precisar de ajuste fino |
+| og:url placeholder | SEO | MÉDIA | URL real é `https://markdown-to-pdf-alpha.vercel.app/` |
+| Chunk size 953KB | Performance | BAIXA | Pode ser otimizado com code splitting |
+| Testes insuficientes | Qualidade | MÉDIA | Apenas 22 smoke tests; sem testes de componente, integração, e2e |
+| XSS não testado | Segurança | MÉDIA | DOMPurify configurado mas sem pentest |
 
 ## 12. Próxima ação recomendada
 
-1. `git push` para o repositório remoto (GitHub)
-2. Conectar repositório ao Vercel
-3. Deploy automático
-4. Validar URL em produção
-5. Ajustar `og:url` no index.html com a URL real
+1. Atualizar og:url no index.html para `https://markdown-to-pdf-alpha.vercel.app/`
+2. Atualizar AUDIT_EVIDENCE.md com evidências de deploy (URL real, status)
+3. git push com og:url atualizado
+4. Realizar auditoria final com base no AUDIT_EVIDENCE.md
 
 ## 13. O que o próximo agente NÃO deve fazer
 
@@ -145,5 +151,5 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 ## 14. Segurança para troca de sessão
 
 - Seguro rodar `/new`? Sim
-- Motivo: MVP completo, todas as 5 sprints commitadas, handoff atualizado, working directory limpo.
-- Nome sugerido para a nova sessão: `markdown-para-pdf-deploy-vercel`
+- Motivo: MVP completo, deploy realizado, AUDIT_EVIDENCE.md gerado, handoff atualizado.
+- Nome sugerido para a nova sessão: `markdown-para-pdf-audit-final`

@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## 2026-06-08 — Deploy na Vercel confirmado
+
+### Resumo
+Deploy do MVP `markdown-para-pdf` na Vercel realizado com sucesso. App acessível em `https://markdown-to-pdf-alpha.vercel.app/`. vercel.json SPA redirect funcionando.
+
+### Arquivos afetados
+- Nenhum arquivo alterado (deploy via Vercel dashboard/CLI)
+
+### Motivo
+Tornar o app acessível em produção.
+
+### Evidência
+- URL `https://markdown-to-pdf-alpha.vercel.app/` informada pelo usuário como funcionando
+
+### Pendências
+- Atualizar og:url no index.html para URL real
+
+---
+
+## 2026-06-08 — AUDIT_EVIDENCE.md gerado
+
+### Resumo
+Pacote de evidências para auditoria final gerado em `docs/audit/AUDIT_EVIDENCE.md`. 759 linhas, 23 seções cobrindo: identificação, fontes consultadas, resumo de entregas (36 itens), arquivos alterados (39), commits (16), testes, build, evidências visuais/funcionais, funcionalidades fora de escopo (28), evidências por funcionalidade (12), por decisão (10), por sprint (7), segurança, deploy, lacunas de evidência (13), riscos visíveis (8), resumo executivo, recomendações (8), pendências, itens não verificados (14), mudanças fora de escopo, falhas de validação e conclusão.
+
+### Arquivos afetados
+- `docs/audit/AUDIT_EVIDENCE.md` (criado, 759 linhas)
+
+### Motivo
+Preparar pacote de evidências para auditoria final contra PRD e plano de implementação.
+
+### Evidência
+- Arquivo existe com 759 linhas e 23 seções estruturadas
+
+### Pendências
+- Atualizar seção de deploy com URL real do Vercel
+
+---
+
 ## 2026-06-08 — Sprint 5 concluída: deploy e validação — MVP COMPLETO
 
 ### Resumo

@@ -1,35 +1,37 @@
 # Current State
 
 ## Estado atual
-MVP `markdown-para-pdf` completo. Todas as 5 sprints concluídas (25/25 tarefas). Build OK, 22 testes OK, typecheck OK (strict mode). Pronto para deploy na Vercel.
+MVP `markdown-para-pdf` completo e em produção. Deploy na Vercel realizado. App rodando em `https://markdown-to-pdf-alpha.vercel.app/`. AUDIT_EVIDENCE.md gerado (759 linhas, 23 seções). Pendências: atualizar og:url, ajustar AUDIT_EVIDENCE.md com URL real.
 
 ## Última ação relevante
-Sprint 5 concluída: GEMINI_API_KEY removida, meta tags + favicon configurados, vercel.json SPA redirect criado, build de produção validado sem segredos/CDNs. Dev server testado em localhost:3000 — funcionando.
+Deploy na Vercel confirmado pelo usuário. App acessível em `https://markdown-to-pdf-alpha.vercel.app/`. AUDIT_EVIDENCE.md gerado com 23 seções de evidências.
 
 ## Arquivos relevantes
-- `docs/agent/HANDOFF.md` — handoff completo
-- `docs/agent/next-actions.md` — próximas ações
+- `docs/audit/AUDIT_EVIDENCE.md` — pacote de evidências para auditoria (759 linhas)
+- `docs/agent/HANDOFF.md` — handoff atualizado
+- `vercel.json` — SPA redirect configurado
+- `index.html` — meta tags, og:url precisa atualização
+- `docs/product/PRD_v1.1.md` — PRD consolidado (1249 linhas)
 - `docs/evolution/DECISIONS.md` — 19 decisões ativas
-- `docs/evolution/CHANGELOG.md` — histórico completo
-- `vercel.json` — SPA redirect para Vercel
-- `public/favicon.svg` — favicon do app
 
 ## Pendências imediatas
-- Git push para repositório remoto
-- Conectar repo ao Vercel e deploy
-- Validar app em produção
+- Atualizar og:url no index.html para URL real do Vercel
+- Atualizar AUDIT_EVIDENCE.md com evidências de deploy
+- git push com og:url atualizado
 
 ## Riscos atuais
-- Chunk size warning no build (921KB) — não bloqueante, pode ser otimizado depois
-- URL no og:url é placeholder — ajustar após deploy
+- og:url é placeholder — SEO/OG não funcional
+- Chunk size 953KB — performance de carregamento
+- Testes insuficientes (apenas 22 smoke tests)
 
 ## Próxima ação recomendada
-Git push → Vercel deploy → validar em produção
+Atualizar og:url → git push → atualizar AUDIT_EVIDENCE.md com evidências de deploy
 
 ## Não fazer agora
 - Não recomeçar PRD, plano ou sprints
 - Não criar novos templates/presets/temas
 - Não adicionar autosave ou tema escuro
+- Não alterar funcionalidades sem justificativa
 
 ## Seguro rodar `/new`?
-Sim — MVP completo, todas as sprints commitadas, handoff atualizado.
+Sim — MVP completo, deploy realizado, handoff atualizado, AUDIT_EVIDENCE.md gerado.
