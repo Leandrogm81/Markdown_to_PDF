@@ -1,30 +1,25 @@
 # Current State
 
 ## Estado atual
-Todos os PDs resolvidos (11 decisões ativas). Sprint 0 concluída. Git inicializado (commit 9eedf50). Pronto para Sprint 1 (migrar CDNs para npm).
+Plano de implementação v2.0 gerado. Todos os PDs resolvidos (11 decisões). 6 sprints planejadas (Sprint 0 concluída). Pronto para executar Sprint 1.
 
 ## Última ação relevante
-PD-05 a PD-09 resolvidos. DECISIONS.md atualizado com 5 decisões novas (presets, temas capa, templates, heurísticas, sem limite PDF).
+Plano de implementação regenerado com PDs resolvidos. 9 arquivos em docs/implementation/.
 
 ## Arquivos relevantes
-- `docs/implementation/Sprint-0-codebase-map.md` — mapa do codebase
+- `docs/implementation/implementation-plan.md` — plano geral v2.0
 - `docs/implementation/SPRINT_01_MIGRACAO_DEPS.md` — próxima sprint
+- `docs/implementation/task-list.md` — 33 tarefas
+- `docs/implementation/test-plan.md` — plano de testes
+- `docs/implementation/sprint-breakdown.md` — dependências
 - `docs/product/PRD_v1.1.md` — PRD consolidado
 - `docs/evolution/DECISIONS.md` — 19 decisões ativas
 
 ## Pendências imediatas
-- Nenhuma. Todos os PDs resolvidos.
-
-## Riscos atuais
-- Migração de CDNs (Sprint 1) pode quebrar build.
-- tsconfig strict mode pode revelar erros de tipo.
+- Nenhuma. Pronto para Sprint 1.
 
 ## Próxima ação recomendada
-Executar Sprint 1: migrar marked, jspdf, html2canvas, Tailwind de CDN para npm.
-
-## Não fazer agora
-- Não implementar funcionalidades novas antes de Sprint 1.
-- Não pular a migração de CDNs.
+Executar Sprint 1: migrar CDNs para npm.
 
 ## Seguro rodar `/new`?
-Sim — Todos os PDs resolvidos, Sprint 0 completa, git inicializado.
+Sim — Plano v2.0 completo, PDs resolvidos, git atualizado.
