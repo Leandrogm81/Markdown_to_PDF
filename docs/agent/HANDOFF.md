@@ -2,7 +2,7 @@
 
 ## 1. Objetivo atual
 
-MVP `markdown-para-pdf` completo e em produção na Vercel. og:url atualizado para URL real. AUDIT_EVIDENCE.md atualizado com evidências de deploy. Git push concluído (bbfe2a0). Próximo passo: auditoria final (aguardando autorização do usuário).
+MVP `markdown-para-pdf` completo e em produção na Vercel. Auditoria final contra PRD v1.1 concluída. Veredito: **Aprovado com ressalvas**. 3 achados importantes (XSS não testado, fidelidade preview/PDF, baixa cobertura de testes). Próximo passo: corrigir achados importantes antes de divulgação ampla.
 
 ## 2. Estado geral do projeto
 
@@ -127,7 +127,12 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 
 ## 12. Próxima ação recomendada
 
-1. Realizar auditoria final com base no AUDIT_EVIDENCE.md (aguardando autorização do usuário)
+1. Testar XSS com payloads reais (Alta)
+2. Capturar screenshots preview vs PDF para validar fidelidade (Alta)
+3. Testar fluxo principal completo em produção (Alta)
+4. Adicionar teste de componente mínimo (Alta)
+5. Testar responsividade em 320px (Média)
+6. Rodar Lighthouse accessibility audit (Média)
 
 ## 13. O que o próximo agente NÃO deve fazer
 

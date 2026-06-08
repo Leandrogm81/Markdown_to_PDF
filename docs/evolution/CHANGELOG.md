@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 2026-06-08 — Auditoria final contra PRD concluída
+
+### Resumo
+Auditoria final completa do MVP `markdown-para-pdf` contra PRD v1.1, UI/UX Guide e plano de implementação. Veredito: **Aprovado com ressalvas**. 12 funcionalidades principais verificadas (10 confirmadas, 1 parcial, 1 não verificada). 10 decisões de produto respeitadas. 3 achados importantes (XSS não testado, fidelidade preview/PDF, baixa cobertura de testes). 0 achados críticos.
+
+### Arquivos afetados
+- `docs/audit/final-audit.md` (criado — 20 seções)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/next-actions.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Concluir ciclo de auditoria do MVP. Documentar veredito e achados para próximas iterações.
+
+### Evidência
+- `docs/audit/final-audit.md` existe com 20 seções estruturadas
+- Veredito: Aprovado com ressalvas
+- 3 achados importantes, 0 críticos
+
+---
+
 ## 2026-06-08 — Deploy na Vercel confirmado
 
 ### Resumo
