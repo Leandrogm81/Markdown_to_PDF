@@ -1,39 +1,33 @@
 # Current State
 
 ## Estado atual
-MVP `markdown-para-pdf` completo, em produção na Vercel e auditado. Auditoria final realizada: **Aprovado com ressalvas**. 3 achados importantes (XSS não testado, fidelidade preview/PDF não validada, baixa cobertura de testes). Nenhum achado crítico.
+MVP `markdown-para-pdf` completo, auditado, correção pós-auditoria aplicada. Checklist `- [x]`/`- [ ]` corrigido (checkbox preservado após sanitização DOMPurify). 37 testes passando. Retrospectiva v1 gerada. Ciclo v1 encerrado. Working directory com mudanças não commitadas.
 
 ## Última ação relevante
-Auditoria final contra PRD v1.1 concluída. Documento salvo em `docs/audit/final-audit.md` (20 seções).
+Correção de checklist aplicada: `'input'` adicionado ao ALLOWED_TAGS em A4DocPreview.tsx. Teste de checkbox adicionado (15 testes XSS). Retrospectiva v1 gerada. HANDOFF atualizado.
 
 ## Arquivos relevantes
-- `docs/audit/final-audit.md` — auditoria final (20 seções)
-- `docs/audit/AUDIT_EVIDENCE.md` — pacote de evidências (23 seções)
-- `docs/product/PRD_v1.1.md` — PRD consolidado (1249 linhas)
-- `docs/design/UI_UX_GUIDE.md` — guia visual (1014 linhas)
-- `docs/evolution/DECISIONS.md` — 19 decisões ativas
+- `components/A4DocPreview.tsx` — ALLOWED_TAGS com `input` (linha 124)
+- `__tests__/xss-sanitization.test.ts` — 15 testes (14 XSS + 1 checkbox)
+- `docs/audit/validation-report.md` — validação pós-correção
+- `docs/evolution/retrospective-v1.md` — retrospectiva do ciclo v1
+- `docs/audit/final-audit.md` — auditoria final
+- `docs/product/PRD_v1.1.md` — PRD consolidado
 
 ## Pendências imediatas
-- Atualizar AUDIT_EVIDENCE.md com status atualizado (og:url, deploy, git push)
-- Registrar CHANGELOG com auditoria final
-- Remover `_migrate_tailwind.py` do repositório
+- Commit e push da correção de checklist + teste + retrospectiva
+- Deploy na Vercel para validar checkboxes em produção
+- Capturar screenshots preview/PDF para evidência visual
 
 ## Riscos atuais
-- XSS não testado com payloads reais (Alta)
-- Fidelidade preview/PDF não validada visualmente (Alta)
-- Baixa cobertura de testes — 22 smoke tests (Alta)
-- Chunk size 953KB sem code splitting (Média)
-
-## Próximas ações recomendadas
-1. Testar XSS com payloads reais
-2. Capturar screenshots preview vs PDF
-3. Testar fluxo principal em produção
-4. Adicionar teste de componente mínimo
+- Fix de checklist não deployado (usuários veem bullets sem checkbox)
+- Fidelidade preview/PDF sem screenshots reais
+- Testes sem componente/integração
 
 ## Não fazer agora
 - Não recomeçar PRD, plano ou sprints
 - Não criar novas funcionalidades
-- Não aprovar para divulgação ampla sem corrigir achados importantes
+- Não remover `input` do ALLOWED_TAGS
 
 ## Seguro rodar `/new`?
-Sim — auditoria final concluída, documento salvo, veredito registrado.
+Sim — correção aplicada e testada (37/37), retrospectiva gerada, handoff atualizado. Mudanças não commitadas aguardam commit/push.

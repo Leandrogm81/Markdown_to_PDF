@@ -5,23 +5,22 @@ Projeto: `/mnt/c/Dev/markdown-para-pdf`
 
 ## 1. Próxima ação imediata
 
-Corrigir achados importantes da auditoria final (XSS, fidelidade visual, testes).
+Commit e push da correção de checklist + teste + retrospectiva. Deploy na Vercel.
 
 ## 2. Status atual
 
-MVP completo, em produção na Vercel, auditado. Veredito: **Aprovado com ressalvas**. 3 achados importantes, 0 críticos.
+MVP completo, auditado, ciclo v1 encerrado. Correção de checklist aplicada (checkbox preservado após DOMPurify). 37 testes passando. Retrospectiva v1 gerada. Working directory com mudanças não commitadas.
 
 ## 3. Sequência de ações
 
 ```
-1. Testar XSS com payloads reais              (Alta)
-2. Capturar screenshots preview vs PDF         (Alta)
-3. Testar fluxo principal em produção          (Alta)
-4. Adicionar teste de componente mínimo        (Alta)
-5. Testar responsividade em 320px              (Média)
-6. Rodar Lighthouse accessibility              (Média)
-7. Testar cross-browser                        (Média)
-8. Otimizar chunk size (code splitting)        (Média)
+1. Commit e push: checklist fix + teste + retrospectiva + handoff  (Alta)
+2. Validar checkboxes no browser em produção                       (Alta)
+3. Capturar screenshots preview/PDF para evidência visual          (Média)
+4. Adicionar teste de componente (A4DocPreview render)             (Média)
+5. Code splitting (dynamic import jsPDF/html2canvas)               (Baixa)
+6. Lighthouse accessibility audit                                  (Média)
+7. Cross-browser testing (Firefox, Safari, Edge)                   (Média)
 ```
 
 ## 4. Não fazer
@@ -30,4 +29,4 @@ MVP completo, em produção na Vercel, auditado. Veredito: **Aprovado com ressal
 - Não criar novas funcionalidades.
 - Não alterar templates/presets/temas.
 - Não adicionar autosave ou tema escuro.
-- Não aprovar para divulgação ampla sem corrigir achados importantes.
+- Não remover `input` do ALLOWED_TAGS.

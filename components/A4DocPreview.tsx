@@ -121,7 +121,7 @@ export const A4DocPreview: React.FC<A4DocPreviewProps> = ({
       if (typeof marked !== 'undefined') {
         try {
           return DOMPurify.sanitize(marked.parse(section) as string, {
-            ALLOWED_TAGS: ['strong', 'em', 'br', 'p', 'div', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'img', 'hr'],
+            ALLOWED_TAGS: ['strong', 'em', 'br', 'p', 'div', 'span', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'img', 'hr', 'input'],
             ALLOWED_ATTR: ['class', 'id', 'href', 'src', 'alt', 'title', 'colspan', 'rowspan', 'align', 'type', 'checked', 'disabled'],
             ALLOW_DATA_ATTR: false,
           });

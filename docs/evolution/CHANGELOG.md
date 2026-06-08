@@ -1,5 +1,89 @@
 # CHANGELOG
 
+## 2026-06-08 — Correção de checklist: checkbox preservado após sanitização DOMPurify
+
+### Resumo
+Bug de fidelidade visual corrigido: checklists `- [x]`/`- [ ]` eram renderizados como bullets sem checkbox porque `input` não estava nas `ALLOWED_TAGS` do DOMPurify. Correção: `'input'` adicionado ao array ALLOWED_TAGS em A4DocPreview.tsx. Teste XSS atualizado (onfocus ajustado) + novo teste de preservação de checkbox. Retrospectiva v1 gerada. HANDOFF e CURRENT_STATE atualizados.
+
+### Arquivos afetados
+- `components/A4DocPreview.tsx` (linha 124: `'input'` adicionado ao ALLOWED_TAGS)
+- `__tests__/xss-sanitization.test.ts` (teste onfocus ajustado + novo teste checkbox, 15 testes)
+- `docs/evolution/retrospective-v1.md` (criado — retrospectiva do ciclo v1)
+- `docs/audit/validation-report.md` (criado — validação pós-correção)
+- `docs/agent/HANDOFF.md` (atualizado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/next-actions.md` (atualizado)
+
+### Motivo
+Bug encontrado durante validação pós-correção: DOMPurify removia `<input type="checkbox">` gerado pelo `marked` para task lists GFM.
+
+### Evidência
+- `npm test` → 37/37 passando (era 36)
+- `npx tsc --noEmit` → OK
+- `npm run build` → OK
+- Teste Node.js confirma: `<input checked="" disabled="" type="checkbox">` preservado após sanitização
+
+### Pendências
+- Deploy na Vercel (fix não está em produção)
+- Capturar screenshots para evidência visual de fidelidade
+
+---
+
+## 2026-06-08 — Validação pós-correção com UI/UX Gate
+
+### Resumo
+Validação pós-correção executada conforme prompt de auditoria. Achado 9.1 (XSS): **corrigido** — 14 testes passando, whitelist inspecionada. Achado 9.3 (cobertura): **parcialmente corrigido** — 22→36 testes. Achado 9.2 (fidelidade): **parcialmente validado** — inspeção de DOM no browser mostrou estrutura correta (6 páginas, numeração, tabela, blockquote), mas **novo bug encontrado**: checklists `- [x]`/`- [ ]` renderizados como bullets sem checkbox porque `input`∉ALLOWED_TAGS no DOMPurify. Veredito: **Ainda precisa de correções**. Relatório completo em `docs/audit/validation-report.md`.
+
+### Arquivos afetados
+- `docs/audit/validation-report.md` (criado — relatório de validação)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Validar se as correções pós-auditoria resolveram os achados da auditoria final.
+
+### Evidência
+- `npm test` → 36/36 passando
+- `npx tsc --noEmit` → OK
+- `npm run build` → OK (chunk 953KB warning)
+- Inspeção de DOM no browser: 6 páginas, estrutura correta
+- Bug de checklist confirmado via teste Node.js: DOMPurify remove `<input type="checkbox">`
+
+### Pendências
+- Corrigir checklist: adicionar `'input'` ao ALLOWED_TAGS (A4DocPreview.tsx linha 124)
+- Capturar screenshots preview/PDF para evidência visual
+- Adicionar teste de componente mínimo
+
+---
+
+## 2026-06-08 — Correção pós-auditoria: XSS testado e cobertura aumentada
+
+### Resumo
+Correção pós-auditoria executada. Achado 9.1 (XSS não testado) corrigido com 14 testes de sanitização cobrindo vetores reais (script, img onerror, svg onload, javascript:, iframe, body onload, input onfocus, details ontoggle, onmouseover, data-*, style). Whitelist DOMPurify inspecionada e confirmada sólida (27 tags, 12 atributos, data-* bloqueados). Cobertura de testes aumentada de 22 para 36 (+63%). `@types/jsdom` adicionado como devDependency.
+
+### Arquivos afetados
+- `__tests__/xss-sanitization.test.ts` (criado — 14 testes)
+- `package.json` (@types/jsdom adicionado)
+- `package-lock.json` (atualizado)
+- `docs/audit/audit-fixes.md` (criado — relatório de correção)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Corrigir achados da auditoria final: XSS não testado (Alta), baixa cobertura de testes (Alta).
+
+### Evidência
+- `npm test` → 36/36 passando
+- `npx tsc --noEmit` → OK
+- `npm run build` → OK
+- 14 testes XSS: todos os payloads bloqueados pela configuração DOMPurify
+
+### Pendências
+- Fidelidade preview/PDF não validada visualmente (Alta)
+- Teste de componente e integração ainda ausentes (Alta)
+
+---
+
 ## 2026-06-08 — Auditoria final contra PRD concluída
 
 ### Resumo
