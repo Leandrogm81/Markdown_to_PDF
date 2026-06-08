@@ -2,7 +2,7 @@
 
 ## 1. Objetivo atual
 
-MVP `markdown-para-pdf` completo e em produção na Vercel. Pacote de evidências para auditoria gerado (`docs/audit/AUDIT_EVIDENCE.md`). Próximo passo: atualizar og:url, ajustar AUDIT_EVIDENCE.md com evidências de deploy, e realizar auditoria final.
+MVP `markdown-para-pdf` completo e em produção na Vercel. og:url atualizado para URL real. AUDIT_EVIDENCE.md atualizado com evidências de deploy. Git push concluído (bbfe2a0). Próximo passo: auditoria final (aguardando autorização do usuário).
 
 ## 2. Estado geral do projeto
 
@@ -114,9 +114,6 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 
 | Pendência | Impacto | Prioridade |
 |---|---|---|
-| Atualizar og:url para URL real do Vercel | SEO/OG não funcional | Média |
-| git push com og:url atualizado | Sincronizar repositório | Média |
-| Atualizar AUDIT_EVIDENCE.md com evidências de deploy | Auditoria incompleta sem evidência de produção | Média |
 | Otimizar chunk size (code splitting) | Performance de carregamento | Baixa |
 
 ## 11. Riscos
@@ -130,10 +127,7 @@ Nenhuma decisão nova registrada nesta preparação de handoff.
 
 ## 12. Próxima ação recomendada
 
-1. Atualizar og:url no index.html para `https://markdown-to-pdf-alpha.vercel.app/`
-2. Atualizar AUDIT_EVIDENCE.md com evidências de deploy (URL real, status)
-3. git push com og:url atualizado
-4. Realizar auditoria final com base no AUDIT_EVIDENCE.md
+1. Realizar auditoria final com base no AUDIT_EVIDENCE.md (aguardando autorização do usuário)
 
 ## 13. O que o próximo agente NÃO deve fazer
 

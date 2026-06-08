@@ -1,37 +1,33 @@
 # Current State
 
 ## Estado atual
-MVP `markdown-para-pdf` completo e em produção. Deploy na Vercel realizado. App rodando em `https://markdown-to-pdf-alpha.vercel.app/`. AUDIT_EVIDENCE.md gerado (759 linhas, 23 seções). Pendências: atualizar og:url, ajustar AUDIT_EVIDENCE.md com URL real.
+MVP `markdown-para-pdf` completo e em produção. Deploy na Vercel confirmado. App rodando em `https://markdown-to-pdf-alpha.vercel.app/`. og:url atualizado para URL real. AUDIT_EVIDENCE.md atualizado com status de deploy (23 seções). Git push realizado (bbfe2a0).
 
 ## Última ação relevante
-Deploy na Vercel confirmado pelo usuário. App acessível em `https://markdown-to-pdf-alpha.vercel.app/`. AUDIT_EVIDENCE.md gerado com 23 seções de evidências.
+og:url atualizado no index.html, AUDIT_EVIDENCE.md atualizado com evidências de deploy, git push concluído (bbfe2a0).
 
 ## Arquivos relevantes
-- `docs/audit/AUDIT_EVIDENCE.md` — pacote de evidências para auditoria (759 linhas)
+- `docs/audit/AUDIT_EVIDENCE.md` — pacote de evidências atualizado (23 seções)
 - `docs/agent/HANDOFF.md` — handoff atualizado
-- `vercel.json` — SPA redirect configurado
-- `index.html` — meta tags, og:url precisa atualização
-- `docs/product/PRD_v1.1.md` — PRD consolidado (1249 linhas)
+- `index.html` — og:url agora aponta para URL real do Vercel
 - `docs/evolution/DECISIONS.md` — 19 decisões ativas
 
 ## Pendências imediatas
-- Atualizar og:url no index.html para URL real do Vercel
-- Atualizar AUDIT_EVIDENCE.md com evidências de deploy
-- git push com og:url atualizado
+- Auditoria final (aguardando autorização do usuário)
 
 ## Riscos atuais
-- og:url é placeholder — SEO/OG não funcional
-- Chunk size 953KB — performance de carregamento
-- Testes insuficientes (apenas 22 smoke tests)
+- Chunk size 953KB — performance de carregamento (baixa)
+- Testes insuficientes (apenas 22 smoke tests) (média)
 
 ## Próxima ação recomendada
-Atualizar og:url → git push → atualizar AUDIT_EVIDENCE.md com evidências de deploy
+Auditoria final com base no AUDIT_EVIDENCE.md (aguardando ordem do usuário).
 
 ## Não fazer agora
 - Não recomeçar PRD, plano ou sprints
 - Não criar novos templates/presets/temas
 - Não adicionar autosave ou tema escuro
 - Não alterar funcionalidades sem justificativa
+- Não executar auditoria final sem autorização
 
 ## Seguro rodar `/new`?
-Sim — MVP completo, deploy realizado, handoff atualizado, AUDIT_EVIDENCE.md gerado.
+Sim — MVP completo, deploy realizado, og:url atualizado, push concluído.
