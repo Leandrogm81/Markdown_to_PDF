@@ -1,5 +1,67 @@
 # CHANGELOG
 
+## 2026-06-07 — Sprint 00B concluída: fundação de testes
+
+### Resumo
+Vitest + React Testing Library configurados. 22 smoke tests criados (10 heurísticas, 12 constantes). Scripts test/test:watch adicionados ao package.json.
+
+### Arquivos afetados
+- `package.json` (deps de teste, scripts)
+- `vite.config.ts` (config test)
+- `utils/__tests__/heuristics.test.ts` (criado, 10 testes)
+- `__tests__/styles.test.ts` (criado, 12 testes)
+- `docs/implementation/SPRINT_00B_TESTES.md` (atualizado)
+- `docs/implementation/sprint-breakdown.md` (Sprint 00B marcada como concluída)
+
+### Motivo
+Configurar infraestrutura de testes antes de implementar funcionalidades. Permite validar cada sprint com testes automatizados.
+
+### Evidência
+`npm test` → 22 testes passando. `npm run build` OK. `npx tsc --noEmit` OK.
+
+---
+
+## 2026-06-07 — Plano de implementação v2.0 gerado
+
+### Resumo
+Plano de implementação regenerado com todos os PDs resolvidos (11 decisões). 7 sprints planejadas, 37 tarefas. Sprint 00B adicionada para fundação de testes.
+
+### Arquivos afetados
+- `docs/implementation/implementation-plan.md` (regenerado)
+- `docs/implementation/task-list.md` (regenerado)
+- `docs/implementation/test-plan.md` (regenerado)
+- `docs/implementation/sprint-breakdown.md` (regenerado)
+- `docs/implementation/SPRINT_01_MIGRACAO_DEPS.md` (regenerado)
+- `docs/implementation/SPRINT_02_SANITIZACAO_NOME.md` (regenerado)
+- `docs/implementation/SPRINT_03_REGRAS_NEGOCIO.md` (regenerado)
+- `docs/implementation/SPRINT_04_UX_RESPONSIVIDADE.md` (regenerado)
+- `docs/implementation/SPRINT_05_DEPLOY_VALIDACAO.md` (regenerado)
+
+### Motivo
+Atualizar plano com decisões de PDs resolvidos. Adicionar Sprint 00B para testes.
+
+### Evidência
+9 arquivos em docs/implementation/ com versão 2.0.
+
+---
+
+## 2026-06-07 — PDs adicionais resolvidos (PD-05 a PD-09)
+
+### Resumo
+5 PDs resolvidos: presets (manter 5), temas capa (manter 4), templates (manter 4), heurísticas (manter 7), limite PDF (não).
+
+### Arquivos afetados
+- `docs/evolution/DECISIONS.md` (5 decisões novas)
+- `docs/agent/CURRENT_STATE.md`
+
+### Motivo
+Fechar todos os PDs antes de gerar plano de implementação.
+
+### Evidência
+DECISIONS.md contém 19 decisões ativas.
+
+---
+
 ## 2026-06-07 — Sprint 0 concluída: mapeamento da codebase
 
 ### Resumo
