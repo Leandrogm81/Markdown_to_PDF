@@ -1,19 +1,19 @@
 # Current State
 
 ## Estado atual
-Sprint 3 concluída (4/4 tarefas feitas). Build OK, 22 testes OK, typecheck OK. Sprints 4-5 quebradas em tarefas mas não iniciadas.
+Sprint 4 concluída (4/4 tarefas feitas). Build OK, 22 testes OK, typecheck OK. Sprint 5 quebrada em tarefas mas não iniciada.
 
 ## Última ação relevante
-Sprint 3 completa: `---` em code blocks não cria mais quebra de página, preview vazio com mensagem, numeração de página exclui capa, encoding UTF-8/Latin-1.
+Sprint 4 completa: responsividade mobile ajustada, área de toque 44px em todos os botões, notificações 5s validadas, timeout 30s na geração de PDF.
 
-## Sprint 3 — Progresso
-- ✅ Tarefa 3.1: `---` em code blocks corrigido (proteção com placeholder)
-- ✅ Tarefa 3.2: Preview vazio com mensagem orientativa
-- ✅ Tarefa 3.3: Numeração de página correta (exclui capa, 1-based, centralizada)
-- ✅ Tarefa 3.4: Encoding de importação (UTF-8 BOM + Latin-1 fallback)
+## Sprint 4 — Progresso
+- ✅ Tarefa 4.1: Responsividade mobile (header padding ajustado)
+- ✅ Tarefa 4.2: Área de toque 44px (todos os botões interativos)
+- ✅ Tarefa 4.3: Notificações 5s validadas (já implementadas)
+- ✅ Tarefa 4.4: Timeout 30s na geração de PDF
 
 ## Pendências imediatas
-- Executar Sprint 4 (UX + Responsividade).
+- Executar Sprint 5 (Deploy + Validação).
 
 ## Seguro rodar `/new`?
-Sim — Sprint 3 completa e commitada. Próximo agente deve iniciar Sprint 4.
+Sim — Sprint 4 completa e commitada. Próximo agente deve iniciar Sprint 5.

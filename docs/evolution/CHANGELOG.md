@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 2026-06-08 — Sprint 4 concluída: UX e responsividade
+
+### Resumo
+Sprint 4 (UX e Responsividade) concluída com sucesso (4/4 tarefas). Header com padding responsivo para 320px. Todos os botões interativos com área de toque mínima de 44px. Notificações de sucesso/erro validadas (5s). Timeout de 30s implementado na geração de PDF com mensagem de erro.
+
+### Arquivos afetados
+- `App.tsx` (header responsivo, botões 44px, timeout 30s)
+- `components/Toolbar.tsx` (botões 44px)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Garantir que o app funciona bem em mobile (320px) e que todos os elementos interativos são acessíveis por toque.
+
+### Evidência
+- `npx tsc --noEmit` → OK
+- `npm test` → 22 testes passando
+- `npm run build` → OK
+
+---
+
 ## 2026-06-08 — Sprint 3 concluída: regras de negócio
 
 ### Resumo

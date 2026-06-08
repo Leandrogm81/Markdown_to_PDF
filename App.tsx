@@ -330,6 +330,13 @@ const App: React.FC = () => {
     setIsGenerating(true);
     setIsSuccess(false);
 
+    // Timeout de 30s — se a geração travar, cancela e mostra erro
+    const timeoutId = setTimeout(() => {
+      setIsGenerating(false);
+      setPdfError("A geração do PDF excedeu 30 segundos. Tente novamente com menos imagens.");
+      setTimeout(() => setPdfError(null), 5000);
+    }, 30000);
+
     try {
       // Find all computed pages inside the A4DocPreview canvas container
       const pageElements = previewContainerRef.current.querySelectorAll('.a4-page-node');
@@ -384,6 +391,7 @@ const App: React.FC = () => {
       setPdfError("Ocorreu um erro ao converter o PDF. Remova ou reduza imagens excessivas se necessário.");
       setTimeout(() => setPdfError(null), 5000);
     } finally {
+      clearTimeout(timeoutId);
       setIsGenerating(false);
     }
   };
@@ -452,7 +460,7 @@ const App: React.FC = () => {
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${activeTheme.bg} ${activeTheme.text}`}>
       
       {/* Upper Navigation Header */}
-      <header className={`px-4 py-3 md:px-6 border-b flex items-center justify-between ${activeTheme.panelBg} ${activeTheme.border} transition-all shadow-sm z-20`}>
+      <header className={`px-2 sm:px-4 py-3 md:px-6 border-b flex items-center justify-between ${activeTheme.panelBg} ${activeTheme.border} transition-all shadow-sm z-20`}>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-600 rounded-lg text-white shadow-md">
             <FileText className="w-5 h-5 animate-pulse" />
@@ -473,7 +481,7 @@ const App: React.FC = () => {
           {/* Tips Button */}
           <button
             onClick={() => setShowTips(!showTips)}
-            className="p-2 hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 hover:text-blue-500"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 hover:text-blue-500"
             title="Dicas de paginação"
           >
             <HelpCircle className="w-5 h-5" />
@@ -482,7 +490,7 @@ const App: React.FC = () => {
           {/* Settings mobile toggle */}
           <button
             onClick={() => setIsMobileSettingsOpen(!isMobileSettingsOpen)}
-            className="p-2 lg:hidden hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center lg:hidden hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500"
             title="Abrir Configurações"
           >
             {isMobileSettingsOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
@@ -494,7 +502,7 @@ const App: React.FC = () => {
             onClick={handleGeneratePdf}
             disabled={isGenerating}
             style={{ backgroundColor: config.coverPage.accentColor }}
-            className="px-4 py-2 text-white font-bold text-xs sm:text-sm rounded-lg shadow-md hover:brightness-110 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
+            className="min-h-[44px] px-3 sm:px-4 py-2 text-white font-bold text-xs sm:text-sm rounded-lg shadow-md hover:brightness-110 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer"
           >
             {isGenerating ? (
               <>

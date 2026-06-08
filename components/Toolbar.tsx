@@ -91,7 +91,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             id={`btn-${act.label.toLowerCase().replace(/\s+/g, '-')}`}
             onClick={() => onInsert(act.before, act.after)}
             type="button"
-            className="p-1.5 opacity-85 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 hover:opacity-100 rounded transition-all duration-150 text-inherit"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center opacity-85 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 hover:opacity-100 rounded transition-all duration-150 text-inherit"
             title={act.label}
           >
             {act.icon}
@@ -105,7 +105,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           onClick={() => onInsert('\n\n---\n\n')}
           type="button"
           id="btn-pagebreak"
-          className="px-2 py-1 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-200 dark:hover:bg-emerald-900 border border-emerald-200 dark:border-emerald-800 rounded transition-colors"
+          className="min-h-[44px] px-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-200 dark:hover:bg-emerald-900 border border-emerald-200 dark:border-emerald-800 rounded transition-colors"
           title="Inserir Quebra de Página Física no PDF"
         >
           <FilePlus2 className="w-3.5 h-3.5" />
@@ -129,7 +129,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             }}
             type="button"
             id="btn-import-file"
-            className="p-1.5 px-2.5 flex items-center gap-1.5 rounded text-[11px] font-medium transition-all duration-200 opacity-80 hover:opacity-100 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 text-emerald-700 dark:text-emerald-400"
+            className="min-h-[44px] px-2.5 flex items-center gap-1.5 rounded text-[11px] font-medium transition-all duration-200 opacity-80 hover:opacity-100 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 text-emerald-700 dark:text-emerald-400"
             title="Importar arquivo de texto (.md, .txt ou .markdown)"
           >
             <Upload className="w-3.5 h-3.5 animate-none" />
@@ -190,7 +190,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             }}
             type="button"
             id="btn-restore"
-            className={`p-1.5 px-2.5 flex items-center gap-1.5 rounded text-[11px] font-medium transition-all duration-200 ${
+            className={`min-h-[44px] px-2.5 flex items-center gap-1.5 rounded text-[11px] font-medium transition-all duration-200 ${
               showRestoreConfirm 
                 ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-300 dark:border-amber-800 animate-pulse' 
                 : 'opacity-80 hover:opacity-100 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 text-inherit'
@@ -213,7 +213,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             }}
             type="button"
             id="btn-clear"
-            className={`p-1.5 px-2.5 flex items-center gap-1.5 rounded text-[11px] font-medium transition-all duration-200 ${
+            className={`min-h-[44px] px-2.5 flex items-center gap-1.5 rounded text-[11px] font-medium transition-all duration-200 ${
               showClearConfirm 
                 ? 'bg-rose-600 text-white dark:bg-rose-700 animate-pulse font-bold' 
                 : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50/50 dark:hover:bg-rose-950/30'
