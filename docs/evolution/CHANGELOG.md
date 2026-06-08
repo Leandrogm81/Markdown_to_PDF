@@ -1,5 +1,36 @@
 # CHANGELOG
 
+## 2026-06-08 — Sprint 5 concluída: deploy e validação — MVP COMPLETO
+
+### Resumo
+Sprint 5 (Deploy e Validação) concluída com sucesso (5/5 tarefas). GEMINI_API_KEY removida do vite.config.ts. Meta tags configuradas (title, description, OG, favicon). vercel.json criado para SPA redirect. Build de produção validado sem segredos ou CDNs. Checklist final completo. **MVP pronto para deploy na Vercel.**
+
+### Arquivos afetados
+- `vite.config.ts` (GEMINI_API_KEY e loadEnv removidos)
+- `index.html` (meta tags, favicon, OG tags)
+- `public/favicon.svg` (criado)
+- `vercel.json` (criado — SPA redirect)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/agent/HANDOFF.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Preparar o app para deploy na Vercel. Remover segredos expostos, configurar SEO/OG, validar build de produção.
+
+### Evidência
+- `npx tsc --noEmit` → OK
+- `npm test` → 22 testes passando
+- `npm run build` → OK
+- `grep -r "GEMINI" dist/` → 0 resultados
+- `grep -r "aistudiocdn" dist/` → 0 resultados
+- `dist/favicon.svg` → presente
+- `dist/index.html` → presente
+
+### Status
+**MVP COMPLETO** — todas as 5 sprints de implementação concluídas. Pronto para deploy na Vercel.
+
+---
+
 ## 2026-06-08 — Sprint 4 concluída: UX e responsividade
 
 ### Resumo

@@ -1,19 +1,23 @@
 # Current State
 
 ## Estado atual
-Sprint 4 concluída (4/4 tarefas feitas). Build OK, 22 testes OK, typecheck OK. Sprint 5 quebrada em tarefas mas não iniciada.
+Todas as 5 sprints concluídas (Sprints 0-5). MVP pronto para deploy na Vercel. Build OK, 22 testes OK, typecheck OK. GEMINI_API_KEY removida, meta tags configuradas, vercel.json criado.
 
 ## Última ação relevante
-Sprint 4 completa: responsividade mobile ajustada, área de toque 44px em todos os botões, notificações 5s validadas, timeout 30s na geração de PDF.
+Sprint 5 completa: GEMINI_API_KEY removida, meta tags + favicon configurados, vercel.json SPA redirect, build de produção validado.
 
-## Sprint 4 — Progresso
-- ✅ Tarefa 4.1: Responsividade mobile (header padding ajustado)
-- ✅ Tarefa 4.2: Área de toque 44px (todos os botões interativos)
-- ✅ Tarefa 4.3: Notificações 5s validadas (já implementadas)
-- ✅ Tarefa 4.4: Timeout 30s na geração de PDF
+## Sprints — Progresso total
+- ✅ Sprint 0: Preparação
+- ✅ Sprint 00B: Fundação de testes
+- ✅ Sprint 1: Migração de deps (7/7)
+- ✅ Sprint 2: Sanitização + nome (5/5)
+- ✅ Sprint 3: Regras de negócio (4/4)
+- ✅ Sprint 4: UX + responsividade (4/4)
+- ✅ Sprint 5: Deploy + validação (5/5)
 
 ## Pendências imediatas
-- Executar Sprint 5 (Deploy + Validação).
+- Deploy na Vercel (push para repo conectado ao Vercel).
+- Validação visual final em produção.
 
 ## Seguro rodar `/new`?
-Sim — Sprint 4 completa e commitada. Próximo agente deve iniciar Sprint 5.
+Sim — MVP completo. Todas as sprints concluídas e commitadas.
