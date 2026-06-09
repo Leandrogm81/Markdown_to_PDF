@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitetura — markdown-para-pdf</title>
+<style>
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --border: #334155;
+    --text: #e2e8f0; --muted: #94a3b8; --accent: #3b82f6;
+    --green: #22c55e; --amber: #f59e0b; --red: #ef4444;
+    --purple: #a855f7; --cyan: #06b6d4; --pink: #ec4899;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height:1.6; }
+  .container { max-width:1200px; margin:0 auto; padding:24px 16px; }
+
+  /* Header */
+  .hero { text-align:center; padding:48px 16px 32px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+  .hero h1 { font-size:2rem; font-weight:800; letter-spacing:-0.02em; }
+  .hero h1 span { background:linear-gradient(135deg,var(--accent),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p { color:var(--muted); margin-top:8px; font-size:0.95rem; max-width:700px; margin-left:auto; margin-right:auto; }
+  .badges { display:flex; gap:8px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .badge { font-size:0.7rem; padding:3px 10px; border-radius:999px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+  .badge-blue { background:#1e3a5f; color:#60a5fa; }
+  .badge-green { background:#14532d; color:#4ade80; }
+  .badge-amber { background:#451a03; color:#fbbf24; }
+
+  /* Sections */
+  .section { margin-bottom:48px; }
+  .section-title { font-size:1.3rem; font-weight:700; margin-bottom:16px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .section-title .icon { font-size:1.1rem; }
+
+  /* Component Cards */
+  .cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:16px; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+  .card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  .card-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .card-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:700; flex-shrink:0; }
+  .card-title { font-weight:700; font-size:0.95rem; }
+  .card-type { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+  .card-desc { font-size:0.82rem; color:var(--muted); margin-bottom:12px; }
+  .card-files { font-size:0.72rem; color:var(--cyan); font-family:monospace; word-break:break-all; }
+  .card-confidence { position:absolute; top:12px; right:12px; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:700; text-transform:uppercase; }
+  .conf-high { background:#14532d; color:#4ade80; }
+  .conf-medium { background:#451a03; color:#fbbf24; }
+  .conf-low { background:#450a0a; color:#f87171; }
+  .card-detail { display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); font-size:0.8rem; color:var(--muted); }
+  .card.expanded .card-detail { display:block; }
+
+  /* Type colors */
+  .type-container .card-icon { background:#1e3a5f; color:#60a5fa; }
+  .type-presentation .card-icon { background:#3b0764; color:#c084fc; }
+  .type-utility .card-icon { background:#14532d; color:#4ade80; }
+  .type-data .card-icon { background:#451a03; color:#fbbf24; }
+  .type-service .card-icon { background:#831843; color:#f472b6; }
+  .type-infrastructure .card-icon { background:#164e63; color:#22d3ee; }
+
+  /* Connections */
+  .conn-list { display:flex; flex-direction:column; gap:8px; }
+  .conn-item { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 16px; display:flex; align-items:center; gap:12px; font-size:0.85rem; }
+  .conn-arrow { color:var(--accent); font-weight:700; font-size:1.1rem; flex-shrink:0; }
+  .conn-from, .conn-to { font-weight:600; color:var(--text); }
+  .conn-type { font-size:0.65rem; background:#1e3a5f; color:#60a5fa; padding:2px 6px; border-radius:4px; text-transform:uppercase; }
+  .conn-desc { color:var(--muted); font-size:0.78rem; }
+
+  /* Data Flows */
+  .flow { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; }
+  .flow-title { font-weight:700; font-size:1rem; margin-bottom:4px; }
+  .flow-desc { font-size:0.82rem; color:var(--muted); margin-bottom:16px; }
+  .flow-steps { display:flex; flex-direction:column; gap:8px; }
+  .flow-step { display:flex; gap:12px; align-items:flex-start; }
+  .step-num { width:28px; height:28px; border-radius:50%; background:var(--accent); color:white; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0; }
+  .step-content { flex:1; }
+  .step-component { font-weight:600; font-size:0.82rem; color:var(--cyan); }
+  .step-action { font-size:0.8rem; color:var(--muted); }
+
+  /* Risks */
+  .risk { background:var(--surface); border-radius:10px; padding:16px; margin-bottom:12px; border-left:4px solid; }
+  .risk-low { border-color:var(--green); }
+  .risk-medium { border-color:var(--amber); }
+  .risk-high { border-color:var(--red); }
+  .risk-title { font-weight:700; font-size:0.9rem; }
+  .risk-area { font-size:0.65rem; text-transform:uppercase; color:var(--muted); margin-left:8px; }
+  .risk-desc { font-size:0.82rem; color:var(--muted); margin-top:6px; }
+  .sev { font-size:0.65rem; padding:2px 6px; border-radius:4px; font-weight:700; text-transform:uppercase; }
+  .sev-low { background:#14532d; color:#4ade80; }
+  .sev-medium { background:#451a03; color:#fbbf24; }
+  .sev-high { background:#450a0a; color:#f87171; }
+
+  /* Unknowns */
+  .unknown { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .unknown-q { font-weight:600; font-size:0.9rem; color:var(--amber); }
+  .unknown-why { font-size:0.8rem; color:var(--muted); margin-top:4px; }
+  .unknown-how { font-size:0.78rem; color:var(--cyan); margin-top:6px; }
+
+  /* Legend */
+  .legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px; font-size:0.78rem; }
+  .legend-item { display:flex; align-items:center; gap:6px; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; }
+
+  /* Toggle */
+  .toggle-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:4px 12px; border-radius:6px; font-size:0.72rem; cursor:pointer; transition:all 0.2s; }
+  .toggle-btn:hover { border-color:var(--accent); color:var(--text); }
+
+  /* Responsive */
+  @media (max-width:768px) {
+    .cards { grid-template-columns:1fr; }
+    .hero h1 { font-size:1.5rem; }
+    .conn-item { flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="hero">
+  <h1><span>markdown-para-pdf</span></h1>
+  <p>Conversor de Markdown para PDF com preview paginado, templates, capas personalizadas e exportação visual. SPA client-side sem backend.</p>
+  <div class="badges">
+    <span class="badge badge-blue">Vite + React 19 + TS</span>
+    <span class="badge badge-green">SPA Client-Side</span>
+    <span class="badge badge-amber">Vercel Deploy</span>
+    <span class="badge badge-blue">37 Testes</span>
+    <span class="badge badge-green">MVP Completo</span>
+  </div>
+</div>
+
+<!-- STACK -->
+<div class="section">
+  <div class="section-title"><span class="icon">🔧</span> Stack Detectada</div>
+  <div class="badges">
+    <span class="badge badge-blue">Vite 6.2</span>
+    <span class="badge badge-blue">React 19</span>
+    <span class="badge badge-blue">TypeScript 5.8</span>
+    <span class="badge badge-blue">Tailwind CSS 4.3</span>
+    <span class="badge badge-green">DOMPurify 3.4</span>
+    <span class="badge badge-green">marked 18.0</span>
+    <span class="badge badge-amber">jsPDF 4.2</span>
+    <span class="badge badge-amber">html2canvas 1.4</span>
+    <span class="badge badge-blue">lucide-react</span>
+    <span class="badge badge-blue">motion</span>
+    <span class="badge badge-green">Vitest 4.1</span>
+    <span class="badge badge-green">React Testing Library</span>
+  </div>
+</div>
+
+<!-- COMPONENTS -->
+<div class="section">
+  <div class="section-title"><span class="icon">📦</span> Componentes Principais</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Observado</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Inferido</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div> Desconhecido</div>
+    <span style="color:var(--muted)">Clique nos cards para ver detalhes</span>
+  </div>
+  <div class="cards" id="components-cards"></div>
+</div>
+
+<!-- CONNECTIONS -->
+<div class="section">
+  <div class="section-title"><span class="icon">🔗</span> Conexões entre Componentes</div>
+  <div class="conn-list" id="connections-list"></div>
+</div>
+
+<!-- DATA FLOWS -->
+<div class="section">
+  <div class="section-title"><span class="icon">🌊</span> Fluxos Principais de Dados</div>
+  <div id="flows-container"></div>
+</div>
+
+<!-- RISKS -->
+<div class="section">
+  <div class="section-title"><span class="icon">⚠️</span> Riscos Identificados</div>
+  <div id="risks-container"></div>
+</div>
+
+<!-- UNKNOWNS -->
+<div class="section">
+  <div class="section-title"><span class="icon">❓</span> Dúvidas e Pontos Não Confirmados</div>
+  <div id="unknowns-container"></div>
+</div>
+
+</div>
+
+<script>
+const DATA = {
+  "components": [
+    {"id":"app_orchestrator","name":"App (Orquestrador Principal)","type":"container","description":"Gerencia todo o estado: texto markdown, configurações, template, geração de PDF, importação, drag-and-drop e modais.","files":["App.tsx"],"confidence":"high","notes":"~789 linhas. Estado global (useState), handlers de importação (UTF-8/Latin-1), geração de PDF (jsPDF+html2canvas), sanitização de nome (PRD 7.10), heurísticas automáticas (useEffect)."},
+    {"id":"a4_preview","name":"A4DocPreview (Preview Paginado)","type":"presentation","description":"Renderiza preview em páginas A4/Letter físicas. Converte markdown→HTML→sanitiza→pagina automaticamente via medição de altura no DOM.","files":["components/A4DocPreview.tsx"],"confidence":"high","notes":"~808 linhas. Proteção de code blocks, paginação por medição offscreen, split inteligente de listas/tabelas/pre, capa com 4 temas, numeração de página."},
+    {"id":"toolbar","name":"Toolbar (Barra de Ferramentas)","type":"presentation","description":"11 botões de formatação markdown, quebra de página, importação de arquivo, restaurar/limpar com confirmação.","files":["components/Toolbar.tsx"],"confidence":"high","notes":"Interface pura via props. Importação com validação 8MB e fallback Latin-1."},
+    {"id":"settings_panel","name":"SettingsPanel (Painel de Configurações)","type":"presentation","description":"4 abas: Modelos, Estética (presets/temas), Capa (título/autor/tema/cor) e Estrutura (página/margens/header).","files":["components/SettingsPanel.tsx"],"confidence":"high","notes":"~625 linhas. SyncLabel para campos auto/manual."},
+    {"id":"heuristics_engine","name":"Heuristics Engine","type":"utility","description":"Extrai automaticamente 7 metadados do markdown: título, subtítulo, autor, data, instituição, header e footer.","files":["utils/heuristics.ts"],"confidence":"high","notes":"154 linhas. Regex PT/EN. Limpa markup dos valores."},
+    {"id":"templates_data","name":"Templates (4 modelos)","type":"data","description":"4 templates: Relatório Executivo, Currículo, Artigo Acadêmico, Manual Técnico API.","files":["templates.ts"],"confidence":"high","notes":"314 linhas. Cada template com markdown e config recomendada."},
+    {"id":"styles_data","name":"Styles (presets e temas)","type":"data","description":"5 presets tipográficos, 7 cores de destaque, 5 temas de editor, font sizes, line heights, margins.","files":["styles.ts"],"confidence":"high","notes":"175 linhas."},
+    {"id":"types_definitions","name":"Types (interfaces TS)","type":"data","description":"DocumentConfig, CoverPageConfig, LayoutConfig, HeaderFooterConfig, MarkdownTemplate e tipos auxiliares.","files":["types.ts"],"confidence":"high","notes":"55 linhas."},
+    {"id":"pdf_generator","name":"PDF Generator","type":"service","description":"Captura páginas como imagens (html2canvas, scale 2.0) e exporta como PDF (jsPDF). Timeout 30s.","files":["App.tsx"],"confidence":"high","notes":"handleGeneratePdf() em App.tsx. Nome do arquivo por getPdfFileName()."},
+    {"id":"deploy_config","name":"Deploy (Vercel)","type":"infrastructure","description":"SPA rewrite via vercel.json. Auto-deploy via push GitHub.","files":["vercel.json"],"confidence":"high","notes":"URL: markdown-to-pdf-alpha.vercel.app"}
+  ],
+  "connections": [
+    {"from":"App","to":"Toolbar","type":"props","desc":"onInsert, onClear, onRestoreDefault, onImportFile, stats, activeTheme"},
+    {"from":"App","to":"A4DocPreview","type":"props","desc":"markdownText, config, containerRef (para captura PDF)"},
+    {"from":"App","to":"SettingsPanel","type":"props","desc":"config, onChangeConfig, onSelectTemplate, overriddenFields"},
+    {"from":"App","to":"Heuristics","type":"import","desc":"extractHeuristics() em useEffect para auto-preencher metadados"},
+    {"from":"App","to":"Templates","type":"import","desc":"TEMPLATES para inicialização e seleção de templates"},
+    {"from":"App","to":"Styles","type":"import","desc":"EDITOR_THEME_CLASSES para tema do editor"},
+    {"from":"A4DocPreview","to":"Styles","type":"import","desc":"STYLE_PRESETS, MARGINS, FONT_SIZES, LINE_HEIGHTS"},
+    {"from":"SettingsPanel","to":"Templates","type":"import","desc":"TEMPLATES para lista de modelos"},
+    {"from":"SettingsPanel","to":"Styles","type":"import","desc":"STYLE_PRESETS, ACCENT_COLORS para presets e cores"},
+    {"from":"PDF Generator","to":"A4DocPreview","type":"DOM query","desc":"Consulta .a4-page-node no DOM para captura via html2canvas"}
+  ],
+  "flows": [
+    {"id":"md_to_preview","name":"Markdown → Preview","desc":"Texto markdown é convertido em páginas A4 visuais","steps":[
+      {"comp":"App","action":"Usuário digita markdown OU seleciona template OU importa arquivo"},
+      {"comp":"Heuristics","action":"extractHeuristics() extrai título, autor, data, etc. automaticamente"},
+      {"comp":"App","action":"Config state atualizado com metadados (campos não sobrescritos)"},
+      {"comp":"A4DocPreview","action":"Markdown dividido por '---' (protegendo code blocks)"},
+      {"comp":"A4DocPreview","action":"marked.parse() → DOMPurify.sanitize() (27 tags, 12 atributos)"},
+      {"comp":"A4DocPreview","action":"Paginação automática: medição de altura offscreen, split inteligente"},
+      {"comp":"A4DocPreview","action":"Renderiza páginas A4 com capa, header/footer e numeração"}
+    ]},
+    {"id":"preview_to_pdf","name":"Preview → PDF","desc":"Páginas capturadas como imagens e exportadas como PDF","steps":[
+      {"comp":"App","action":"Usuário clica 'Baixar PDF Elegante'"},
+      {"comp":"PDF Gen","action":"Consulta DOM para .a4-page-node"},
+      {"comp":"PDF Gen","action":"html2canvas captura cada página (scale 2.0, JPEG 0.85)"},
+      {"comp":"PDF Gen","action":"jsPDF adiciona cada imagem como página (A4/Letter)"},
+      {"comp":"PDF Gen","action":"Nome gerado: título > heading > arquivo importado > 50 chars"},
+      {"comp":"PDF Gen","action":"pdf.save() dispara download"}
+    ]},
+    {"id":"import","name":"Importação de Arquivo","desc":"Arquivo .md/.txt/.markdown importado com validação","steps":[
+      {"comp":"Toolbar","action":"Usuário seleciona arquivo via input ou drag-and-drop"},
+      {"comp":"App","action":"Validação: se > 8MB, rejeita"},
+      {"comp":"App","action":"Leitura UTF-8. Se BOM, remove. Se U+FFFD, relê como ISO-8859-1"},
+      {"comp":"App","action":"Se já houver conteúdo, modal de confirmação"},
+      {"comp":"App","action":"Atualiza state, extrai nome para título da capa, notifica sucesso"}
+    ]}
+  ],
+  "risks": [
+    {"title":"Bundle 953KB sem code splitting","area":"performance","severity":"low","desc":"jsPDF e html2canvas não são dynamic import. First paint lento em conexões lentas."},
+    {"title":"Sem testes de componente","area":"engineering","severity":"medium","desc":"37 testes unitários mas nenhum teste de renderização React ou e2e."},
+    {"title":"Fidelidade preview/PDF não verificada","area":"product","severity":"medium","desc":"Nunca comparado preview vs PDF com screenshots lado a lado."},
+    {"title":"Cross-browser não testado","area":"product","severity":"medium","desc":"Não validado em Firefox, Safari ou Edge."},
+    {"title":"PDF como imagem rasterizada","area":"product","severity":"low","desc":"Texto não selecionável/pesquisável no PDF. Decisão aceita para MVP."},
+    {"title":"App.tsx com muitas responsabilidades","area":"maintainability","severity":"low","desc":"~789 linhas concentrando estado, handlers, PDF, heurísticas e UI."}
+  ],
+  "unknowns": [
+    {"q":"Funciona em Firefox, Safari e Edge?","why":"html2canvas/jsPDF podem ter comportamento diferente por engine","how":"Testar manualmente com documento de exemplo"},
+    {"q":"Performance com documentos grandes (100+ páginas)?","why":"Paginação via medição de DOM pode ficar lenta","how":"Testar com 50+ páginas e medir tempo"},
+    {"q":"html2canvas captura tabelas complexas e imagens?","why":"Limitações conhecidas do html2canvas","how":"Testar com tabelas largas, imagens, code blocks longos"}
+  ]
+};
+
+// Render components
+const cardsEl = document.getElementById('components-cards');
+DATA.components.forEach(c => {
+  const typeClass = 'type-' + c.type;
+  const confClass = 'conf-' + c.confidence;
+  const div = document.createElement('div');
+  div.className = `card ${typeClass}`;
+  div.innerHTML = `
+    <span class="card-confidence ${confClass}">${c.confidence}</span>
+    <div class="card-header">
+      <div class="card-icon">${c.type === 'container' ? '🏗' : c.type === 'presentation' ? '🎨' : c.type === 'utility' ? '⚙' : c.type === 'data' ? '📄' : c.type === 'service' ? '🖨' : '☁'}</div>
+      <div>
+        <div class="card-title">${c.name}</div>
+        <div class="card-type">${c.type}</div>
+      </div>
+    </div>
+    <div class="card-desc">${c.description}</div>
+    <div class="card-files">${c.files.join(', ')}</div>
+    <div class="card-detail">${c.notes}</div>
+  `;
+  div.addEventListener('click', () => div.classList.toggle('expanded'));
+  cardsEl.appendChild(div);
+});
+
+// Render connections
+const connEl = document.getElementById('connections-list');
+DATA.connections.forEach(c => {
+  const div = document.createElement('div');
+  div.className = 'conn-item';
+  div.innerHTML = `
+    <span class="conn-from">${c.from}</span>
+    <span class="conn-arrow">→</span>
+    <span class="conn-to">${c.to}</span>
+    <span class="conn-type">${c.type}</span>
+    <span class="conn-desc">${c.desc}</span>
+  `;
+  connEl.appendChild(div);
+});
+
+// Render flows
+const flowsEl = document.getElementById('flows-container');
+DATA.flows.forEach(f => {
+  const div = document.createElement('div');
+  div.className = 'flow';
+  div.innerHTML = `
+    <div class="flow-title">${f.name}</div>
+    <div class="flow-desc">${f.desc}</div>
+    <div class="flow-steps">
+      ${f.steps.map((s,i) => `
+        <div class="flow-step">
+          <div class="step-num">${i+1}</div>
+          <div class="step-content">
+            <div class="step-component">${s.comp}</div>
+            <div class="step-action">${s.action}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  flowsEl.appendChild(div);
+});
+
+// Render risks
+const risksEl = document.getElementById('risks-container');
+DATA.risks.forEach(r => {
+  const div = document.createElement('div');
+  div.className = `risk risk-${r.severity}`;
+  div.innerHTML = `
+    <span class="risk-title">${r.title}</span>
+    <span class="risk-area">${r.area}</span>
+    <span class="sev sev-${r.severity}" style="float:right">${r.severity}</span>
+    <div class="risk-desc">${r.desc}</div>
+  `;
+  risksEl.appendChild(div);
+});
+
+// Render unknowns
+const unkEl = document.getElementById('unknowns-container');
+DATA.unknowns.forEach(u => {
+  const div = document.createElement('div');
+  div.className = 'unknown';
+  div.innerHTML = `
+    <div class="unknown-q">❓ ${u.q}</div>
+    <div class="unknown-why">${u.why}</div>
+    <div class="unknown-how">💡 Verificação sugerida: ${u.how}</div>
+  `;
+  unkEl.appendChild(div);
+});
+</script>
+
+</body>
+</html>

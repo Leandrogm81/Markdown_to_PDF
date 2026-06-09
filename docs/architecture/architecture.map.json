@@ -1,0 +1,586 @@
+{
+  "project": {
+    "name": "markdown-para-pdf",
+    "description": "Conversor de Markdown para PDF com preview paginado, templates, capas personalizadas e exportação visual. SPA client-side sem backend, hospedado na Vercel.",
+    "detected_stack": [
+      "Vite 6.2",
+      "React 19",
+      "TypeScript 5.8 (strict)",
+      "Tailwind CSS 4.3",
+      "DOMPurify 3.4",
+      "marked 18.0",
+      "jsPDF 4.2",
+      "html2canvas 1.4",
+      "lucide-react 1.17",
+      "motion 12.40",
+      "Vitest 4.1",
+      "React Testing Library"
+    ],
+    "entry_points": [
+      {
+        "file": "index.html",
+        "description": "HTML shell com meta tags SEO/OG, carrega index.tsx via script module",
+        "confidence": "high"
+      },
+      {
+        "file": "index.tsx",
+        "description": "Ponto de entrada React: cria root no #root e renderiza App em StrictMode",
+        "confidence": "high"
+      }
+    ],
+    "confidence": "high"
+  },
+  "components": [
+    {
+      "id": "app_orchestrator",
+      "name": "App (Orquestrador Principal)",
+      "type": "container",
+      "description": "Componente raiz que gerencia todo o estado da aplicação: texto markdown, configurações do documento, template selecionado, geração de PDF, importação de arquivos, drag-and-drop e modais de confirmação.",
+      "files": ["App.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "Contém ~789 linhas. Responsável por: estado global (useState), handlers de importação (UTF-8/Latin-1), geração de PDF (jsPDF + html2canvas), sanitização de nome do PDF (PRD 7.10), heurísticas automáticas (useEffect), inserção de markdown no cursor, seleção de templates, drag-and-drop."
+    },
+    {
+      "id": "a4_preview",
+      "name": "A4DocPreview (Preview Paginado)",
+      "type": "presentation",
+      "description": "Renderiza o preview visual do documento em páginas A4/Letter físicas. Converte markdown para HTML via marked, sanitiza com DOMPurify, pagina automaticamente usando medição de altura real no DOM, renderiza capa e páginas de conteúdo com header/footer.",
+      "files": ["components/A4DocPreview.tsx"],
+      "observed_from": ["components/A4DocPreview.tsx"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "Componente mais complexo (~808 linhas). Inclui: proteção de code blocks contra split por ---, paginação por medição de altura (scratchpad offscreen), split inteligente de listas/tabelas/pre, renderização de capa com 4 temas, numeração de página excluindo capa."
+    },
+    {
+      "id": "toolbar",
+      "name": "Toolbar (Barra de Ferramentas)",
+      "type": "presentation",
+      "description": "Barra de ferramentas com botões de formatação markdown (negrito, itálico, títulos, código, citação, lista, checklist, link, imagem, tabela), quebra de página, importação de arquivo, restaurar padrão e limpar.",
+      "files": ["components/Toolbar.tsx"],
+      "observed_from": ["components/Toolbar.tsx"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "Interface pura via props: onInsert, onClear, onRestoreDefault, onImportFile. Contagem de palavras/caracteres/tempo de leitura. Importação com validação 8MB e fallback Latin-1. Confirmação duplo-clique para ações destrutivas."
+    },
+    {
+      "id": "settings_panel",
+      "name": "SettingsPanel (Painel de Configurações)",
+      "type": "presentation",
+      "description": "Painel lateral com 4 abas: Modelos (templates), Estética (presets, tipografia, tema do editor), Capa (título, subtítulo, autor, data, instituição, tema, cor de destaque) e Estrutura (formato de página, margens, orientação, header/footer).",
+      "files": ["components/SettingsPanel.tsx"],
+      "observed_from": ["components/SettingsPanel.tsx"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "~625 linhas. Inclui SyncLabel para campos auto/preenchidos manualmente (overriddenFields). Exporta SyncLabel como componente reutilizável."
+    },
+    {
+      "id": "heuristics_engine",
+      "name": "Heuristics Engine (Extração de Metadados)",
+      "type": "utility",
+      "description": "Extrai automaticamente metadados do texto markdown: título (# heading), subtítulo, autor, data, instituição, header text e footer text. Usa regex e heurísticas sem IA.",
+      "files": ["utils/heuristics.ts"],
+      "observed_from": ["utils/heuristics.ts"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "154 linhas. Suporta português e inglês. Detecta datas em formato textual (meses) e numérico (DD/MM/YYYY). Limpa markup markdown dos valores extraídos."
+    },
+    {
+      "id": "templates_data",
+      "name": "Templates (Dados de Modelos)",
+      "type": "data",
+      "description": "Array com 4 templates pré-configurados: Relatório Executivo, Currículo Profissional, Artigo Acadêmico, Manual Técnico API. Cada template contém markdown, config recomendada e metadados.",
+      "files": ["templates.ts"],
+      "observed_from": ["templates.ts"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "314 linhas. Cada template tem id, name, icon, description, markdown e recommendedConfig parcial."
+    },
+    {
+      "id": "styles_data",
+      "name": "Styles (Dados de Estilo)",
+      "type": "data",
+      "description": "Configurações de estilo: 5 presets tipográficos (modern, classic, tech, moleskine, executive), 7 cores de destaque, 5 temas de editor (light, dark, sand, forest, ocean), tamanhos de fonte, alturas de linha e margens.",
+      "files": ["styles.ts"],
+      "observed_from": ["styles.ts"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "175 linhas. Exporta STYLE_PRESETS, ACCENT_COLORS, EDITOR_THEME_CLASSES, FONT_SIZES, LINE_HEIGHTS, MARGINS."
+    },
+    {
+      "id": "types_definitions",
+      "name": "Types (Definições de Tipo)",
+      "type": "data",
+      "description": "Interfaces TypeScript para DocumentConfig, CoverPageConfig, LayoutConfig, HeaderFooterConfig, MarkdownTemplate e tipos auxiliares (PresetType, FontSize, etc.).",
+      "files": ["types.ts"],
+      "observed_from": ["types.ts"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "55 linhas. Define a estrutura de dados central compartilhada por todos os componentes."
+    },
+    {
+      "id": "pdf_generator",
+      "name": "PDF Generator (Geração de PDF)",
+      "type": "service",
+      "description": "Serviço de geração de PDF integrado em App.tsx. Usa jsPDF para criar o documento e html2canvas para capturar cada página renderizada como imagem JPEG (scale 2.0). Timeout de 30s.",
+      "files": ["App.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "Função handleGeneratePdf em App.tsx (linhas 327-397). Itera sobre elementos .a4-page-node, captura cada um com html2canvas, adiciona ao jsPDF como imagem. Nome do arquivo gerado por getPdfFileName (prioridade: título capa > heading # > nome importado > primeiros 50 chars)."
+    },
+    {
+      "id": "deploy_config",
+      "name": "Deploy Config (Vercel)",
+      "type": "infrastructure",
+      "description": "Configuração de deploy na Vercel como site estático SPA. vercel.json com rewrite para SPA. Auto-deploy via push no GitHub.",
+      "files": ["vercel.json"],
+      "observed_from": ["vercel.json"],
+      "inferred_from": [],
+      "confidence": "high",
+      "notes": "URL de produção: https://markdown-to-pdf-alpha.vercel.app/"
+    }
+  ],
+  "connections": [
+    {
+      "from": "app_orchestrator",
+      "to": "toolbar",
+      "type": "props",
+      "description": "App passa callbacks e dados para Toolbar: onInsert, onClear, onRestoreDefault, onImportFile, charCount, wordCount, readTime, activeTheme.",
+      "files": ["App.tsx", "components/Toolbar.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "app_orchestrator",
+      "to": "a4_preview",
+      "type": "props",
+      "description": "App passa markdownText, config e containerRef para A4DocPreview. O previewContainerRef é usado posteriormente pelo PDF generator para capturar as páginas.",
+      "files": ["App.tsx", "components/A4DocPreview.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "app_orchestrator",
+      "to": "settings_panel",
+      "type": "props",
+      "description": "App passa config, onChangeConfig, onSelectTemplate, selectedTemplateId, overriddenFields, onToggleOverride, onSetOverride para SettingsPanel.",
+      "files": ["App.tsx", "components/SettingsPanel.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "app_orchestrator",
+      "to": "heuristics_engine",
+      "type": "import",
+      "description": "App importa extractHeuristics e a chama em useEffect sempre que markdownText ou overriddenFields mudam. Resultado atualiza config (coverPage e headerFooter) automaticamente.",
+      "files": ["App.tsx", "utils/heuristics.ts"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "app_orchestrator",
+      "to": "templates_data",
+      "type": "import",
+      "description": "App importa TEMPLATES para inicializar o estado padrão (INITIAL_MARKDOWN) e para seleção de templates via handleSelectTemplate.",
+      "files": ["App.tsx", "templates.ts"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "app_orchestrator",
+      "to": "styles_data",
+      "type": "import",
+      "description": "App importa EDITOR_THEME_CLASSES para aplicar classes CSS do tema ativo no layout.",
+      "files": ["App.tsx", "styles.ts"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "a4_preview",
+      "to": "styles_data",
+      "type": "import",
+      "description": "A4DocPreview importa STYLE_PRESETS, MARGINS, FONT_SIZES, LINE_HEIGHTS para aplicar estilos visuais nas páginas.",
+      "files": ["components/A4DocPreview.tsx", "styles.ts"],
+      "observed_from": ["components/A4DocPreview.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "a4_preview",
+      "to": "types_definitions",
+      "type": "import",
+      "description": "A4DocPreview importa tipos DocumentConfig, PresetType, MarginSize de types.ts.",
+      "files": ["components/A4DocPreview.tsx", "types.ts"],
+      "observed_from": ["components/A4DocPreview.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "settings_panel",
+      "to": "templates_data",
+      "type": "import",
+      "description": "SettingsPanel importa TEMPLATES para renderizar a lista de templates na aba 'Modelos'.",
+      "files": ["components/SettingsPanel.tsx", "templates.ts"],
+      "observed_from": ["components/SettingsPanel.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "settings_panel",
+      "to": "styles_data",
+      "type": "import",
+      "description": "SettingsPanel importa STYLE_PRESETS e ACCENT_COLORS para renderizar presets e cores de destaque.",
+      "files": ["components/SettingsPanel.tsx", "styles.ts"],
+      "observed_from": ["components/SettingsPanel.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "app_orchestrator",
+      "to": "pdf_generator",
+      "type": "internal",
+      "description": "handleGeneratePdf é uma função dentro de App.tsx que usa previewContainerRef.current para acessar os elementos .a4-page-node renderizados por A4DocPreview e gerar o PDF.",
+      "files": ["App.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "from": "pdf_generator",
+      "to": "a4_preview",
+      "type": "dom_query",
+      "description": "O PDF generator consulta o DOM para encontrar elementos .a4-page-node dentro do container de preview. Não há acoplamento direto de código — é uma leitura do DOM renderizado.",
+      "files": ["App.tsx"],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    }
+  ],
+  "data_flows": [
+    {
+      "id": "markdown_to_preview",
+      "name": "Markdown → Preview Visual",
+      "description": "O texto markdown é convertido em HTML sanitizado e renderizado como páginas A4 físicas no preview.",
+      "steps": [
+        {
+          "order": 1,
+          "component": "app_orchestrator",
+          "action": "Usuário digita markdown no textarea OU seleciona template OU importa arquivo (.md/.txt/.markdown)",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 2,
+          "component": "heuristics_engine",
+          "action": "extractHeuristics() é chamado automaticamente via useEffect para extrair título, subtítulo, autor, data, instituição, header e footer do texto",
+          "files": ["utils/heuristics.ts"],
+          "confidence": "high"
+        },
+        {
+          "order": 3,
+          "component": "app_orchestrator",
+          "action": "Config state é atualizado com metadados extraídos (campos não sobrescritos manualmente pelo usuário)",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 4,
+          "component": "a4_preview",
+          "action": "Markdown é dividido por '---' (protegendo code blocks) em seções",
+          "files": ["components/A4DocPreview.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 5,
+          "component": "a4_preview",
+          "action": "Cada seção é convertida via marked.parse() e sanitizada via DOMPurify.sanitize() com whitelist de 27 tags e 12 atributos",
+          "files": ["components/A4DocPreview.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 6,
+          "component": "a4_preview",
+          "action": "HTML sanitizado é paginado automaticamente: medição de altura offscreen (scratchpad), split inteligente de listas/tabelas/pre, carry de headings",
+          "files": ["components/A4DocPreview.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 7,
+          "component": "a4_preview",
+          "action": "Páginas são renderizadas como divs com dimensões físicas A4/Letter (mm), com capa opcional, header/footer e numeração (excluindo capa)",
+          "files": ["components/A4DocPreview.tsx"],
+          "confidence": "high"
+        }
+      ],
+      "observed_from": ["App.tsx", "components/A4DocPreview.tsx", "utils/heuristics.ts"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "id": "preview_to_pdf",
+      "name": "Preview → PDF Exportado",
+      "description": "As páginas renderizadas no preview são capturadas como imagens e exportadas como arquivo PDF.",
+      "steps": [
+        {
+          "order": 1,
+          "component": "app_orchestrator",
+          "action": "Usuário clica 'Baixar PDF Elegante'. handleGeneratePdf() é chamada.",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 2,
+          "component": "pdf_generator",
+          "action": "Consulta DOM para encontrar todos os elementos .a4-page-node dentro do previewContainerRef",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 3,
+          "component": "pdf_generator",
+          "action": "Para cada página: html2canvas captura como canvas (scale 2.0), converte para JPEG (qualidade 0.85)",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 4,
+          "component": "pdf_generator",
+          "action": "jsPDF adiciona cada imagem como página no PDF (A4 ou Letter, portrait ou landscape)",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 5,
+          "component": "pdf_generator",
+          "action": "Nome do arquivo é gerado por getPdfFileName(): título da capa > heading # > nome do arquivo importado > primeiros 50 chars. Sanitizado por sanitizePdfName() (NFD, lowercase, hífens, máx 80 chars).",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 6,
+          "component": "pdf_generator",
+          "action": "pdf.save(fileName) dispara download do arquivo PDF no navegador",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        }
+      ],
+      "observed_from": ["App.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    },
+    {
+      "id": "file_import_flow",
+      "name": "Importação de Arquivo",
+      "description": "Arquivo .md/.txt/.markdown é importado via file picker ou drag-and-drop, com validação de tamanho e encoding.",
+      "steps": [
+        {
+          "order": 1,
+          "component": "toolbar",
+          "action": "Usuário seleciona arquivo via input file ou arrasta para o editor",
+          "files": ["components/Toolbar.tsx", "App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 2,
+          "component": "app_orchestrator",
+          "action": "Validação de tamanho: se > 8MB, rejeita com notificação",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 3,
+          "component": "app_orchestrator",
+          "action": "Leitura como UTF-8. Se BOM (0xFEFF), remove. Se U+FFFD (replacement char), relê como ISO-8859-1",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 4,
+          "component": "app_orchestrator",
+          "action": "Se já houver conteúdo, mostra modal de confirmação antes de substituir",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        },
+        {
+          "order": 5,
+          "component": "app_orchestrator",
+          "action": "Atualiza markdownText, limpa template selecionado, extrai nome do arquivo para título da capa, mostra notificação de sucesso",
+          "files": ["App.tsx"],
+          "confidence": "high"
+        }
+      ],
+      "observed_from": ["App.tsx", "components/Toolbar.tsx"],
+      "inferred_from": [],
+      "confidence": "high"
+    }
+  ],
+  "risks": [
+    {
+      "id": "chunk_size",
+      "title": "Bundle size 953KB sem code splitting",
+      "area": "performance",
+      "description": "O bundle principal tem ~953KB porque jsPDF e html2canvas não são carregados dinamicamente. Em conexões lentas (2G/3G), o first paint pode ser significativamente mais lento.",
+      "severity": "low",
+      "evidence": ["npm run build output com warning de chunk size", "docs/agent/CURRENT_STATE.md", "docs/evolution/retrospective-v1.md"],
+      "confidence": "high"
+    },
+    {
+      "id": "no_component_tests",
+      "title": "Ausência de testes de componente e integração",
+      "area": "engineering",
+      "description": "37 testes existentes são unitários (heurísticas, constantes, sanitização XSS). Não há teste de renderização de componente (React Testing Library) nem teste de integração/end-to-end.",
+      "severity": "medium",
+      "evidence": ["__tests__/xss-sanitization.test.ts (15 testes)", "__tests__/styles.test.ts (12 testes)", "utils/__tests__/heuristics.test.ts (10 testes)", "docs/audit/final-audit.md"],
+      "confidence": "high"
+    },
+    {
+      "id": "pdf_fidelity_unverified",
+      "title": "Fidelidade preview/PDF sem evidência visual",
+      "area": "product",
+      "description": "A fidelidade entre o preview e o PDF gerado nunca foi validada com screenshots lado a lado. A captura via html2canvas pode ter divergências sutis de renderização.",
+      "severity": "medium",
+      "evidence": ["docs/audit/final-audit.md (achado 9.2)", "docs/evolution/retrospective-v1.md"],
+      "confidence": "high"
+    },
+    {
+      "id": "cross_browser_untested",
+      "title": "Cross-browser não validado",
+      "area": "product",
+      "description": "O app não foi testado em Firefox, Safari ou Edge. html2canvas pode ter comportamento diferente entre engines de renderização.",
+      "severity": "medium",
+      "evidence": ["docs/agent/CURRENT_STATE.md", "docs/agent/HANDOFF.md"],
+      "confidence": "high"
+    },
+    {
+      "id": "pdf_as_raster",
+      "title": "PDF gerado como imagem rasterizada (sem texto selecionável)",
+      "area": "product",
+      "description": "O PDF é gerado como captura de tela (html2canvas → JPEG → jsPDF). Texto não é selecionável, pesquisável ou acessível no PDF final. Decisão aceita para MVP.",
+      "severity": "low",
+      "evidence": ["docs/evolution/DECISIONS.md (decisão 'PDF visual/rasterizado aceitável no MVP')"],
+      "confidence": "high"
+    },
+    {
+      "id": "app_component_size",
+      "title": "App.tsx com muitas responsabilidades (~789 linhas)",
+      "area": "maintainability",
+      "description": "O componente App.tsx concentra estado, handlers de importação, geração de PDF, heurísticas, inserção de markdown e lógica de UI. Pode dificultar manutenção e testabilidade.",
+      "severity": "low",
+      "evidence": ["App.tsx (789 linhas)"],
+      "confidence": "medium"
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "browser_compat",
+      "question": "O app funciona corretamente em Firefox, Safari e Edge?",
+      "why_it_matters": "html2canvas e jsPDF podem ter comportamento diferente em cada engine de renderização",
+      "related_files": ["App.tsx", "components/A4DocPreview.tsx"],
+      "suggested_verification": "Testar manualmente em Firefox, Safari e Edge com um documento de exemplo"
+    },
+    {
+      "id": "performance_large_docs",
+      "question": "Como o app se comporta com documentos grandes (100+ páginas)?",
+      "why_it_matters": "A paginação usa medição de DOM offscreen, que pode ficar lenta com muitas páginas",
+      "related_files": ["components/A4DocPreview.tsx"],
+      "suggested_verification": "Testar com documento markdown gerando 50+ páginas e medir tempo de renderização"
+    },
+    {
+      "id": "html2canvas_edge_cases",
+      "question": "html2canvas captura corretamente tabelas complexas, imagens externas e CSS avançado?",
+      "why_it_matters": "Limitações conhecidas do html2canvas podem causar divergências no PDF final",
+      "related_files": ["App.tsx"],
+      "suggested_verification": "Testar PDF com tabelas largas, imagens, code blocks longos e gradientes"
+    }
+  ],
+  "evidence_index": [
+    {
+      "file": "package.json",
+      "what_was_found": "Stack completa: Vite, React 19, TypeScript, Tailwind CSS 4, DOMPurify, marked, jsPDF, html2canvas, lucide-react, motion, Vitest",
+      "used_for": ["component", "connection", "data_flow"]
+    },
+    {
+      "file": "index.html",
+      "what_was_found": "Ponto de entrada HTML com meta tags SEO/OG, idioma pt-br, carrega index.tsx via script module",
+      "used_for": ["component"]
+    },
+    {
+      "file": "index.tsx",
+      "what_was_found": "Bootstrap React: createRoot em #root, renderiza App em StrictMode",
+      "used_for": ["component"]
+    },
+    {
+      "file": "App.tsx",
+      "what_was_found": "Orquestrador principal: estado global, handlers, PDF generation (jsPDF+html2canvas), heurísticas, importação com encoding, drag-and-drop, sanitização de nome, modais",
+      "used_for": ["component", "connection", "data_flow", "risk"]
+    },
+    {
+      "file": "components/A4DocPreview.tsx",
+      "what_was_found": "Preview paginado: marked+DOMPurify, paginação por medição de DOM, split de listas/tabelas/pre, capa com 4 temas, header/footer, numeração de página",
+      "used_for": ["component", "connection", "data_flow", "risk"]
+    },
+    {
+      "file": "components/Toolbar.tsx",
+      "what_was_found": "Toolbar com 11 ações markdown, quebra de página, importação com validação 8MB e fallback Latin-1, restaurar/limpar com confirmação",
+      "used_for": ["component", "connection", "data_flow"]
+    },
+    {
+      "file": "components/SettingsPanel.tsx",
+      "what_was_found": "Painel com 4 abas (templates, estilo, capa, estrutura), SyncLabel para campos auto/manual",
+      "used_for": ["component", "connection"]
+    },
+    {
+      "file": "utils/heuristics.ts",
+      "what_was_found": "Extração automática de 7 metadados do markdown via regex (PT/EN)",
+      "used_for": ["component", "data_flow"]
+    },
+    {
+      "file": "templates.ts",
+      "what_was_found": "4 templates com markdown e config recomendada",
+      "used_for": ["component", "connection"]
+    },
+    {
+      "file": "styles.ts",
+      "what_was_found": "5 presets, 7 cores, 5 temas de editor, font sizes, line heights, margins",
+      "used_for": ["component", "connection"]
+    },
+    {
+      "file": "types.ts",
+      "what_was_found": "Interfaces centrais: DocumentConfig, CoverPageConfig, LayoutConfig, HeaderFooterConfig, MarkdownTemplate",
+      "used_for": ["component"]
+    },
+    {
+      "file": "vercel.json",
+      "what_was_found": "SPA rewrite para deploy na Vercel",
+      "used_for": ["component"]
+    },
+    {
+      "file": "vite.config.ts",
+      "what_was_found": "Configuração Vite: React plugin, Tailwind CSS plugin, alias @, test config (jsdom, globals)",
+      "used_for": ["component"]
+    },
+    {
+      "file": "docs/agent/CURRENT_STATE.md",
+      "what_was_found": "Estado atual: MVP completo, 37 testes, deploy Vercel, ciclo v1 encerrado",
+      "used_for": ["risk"]
+    },
+    {
+      "file": "docs/evolution/retrospective-v1.md",
+      "what_was_found": "Retrospectiva: débitos técnicos, padrões de falha, sugestões para v2",
+      "used_for": ["risk", "unknown"]
+    },
+    {
+      "file": "docs/evolution/DECISIONS.md",
+      "what_was_found": "19 decisões ativas do produto (autosave NÃO, 8MB, DOMPurify, sem tema escuro, etc.)",
+      "used_for": ["risk"]
+    }
+  ]
+}

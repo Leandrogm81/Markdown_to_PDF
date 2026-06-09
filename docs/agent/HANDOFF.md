@@ -2,34 +2,31 @@
 
 ## 1. Objetivo atual
 
-MVP `markdown-para-pdf` completo, auditado e com correção pós-auditoria aplicada. Validação pós-correção executada. Retrospectiva v1 gerada. Ciclo v1 encerrado. Próximo passo: deploy da correção de checklist e transição para v2.
+MVP `markdown-para-pdf` completo, auditado, com correção de checklist e correção de oklch deployadas. Arquitetura mapeada. Ciclo v1 encerrado. Próximo passo: transição para v2 (code splitting, testes de componente, Lighthouse, cross-browser).
 
 ## 2. Estado geral do projeto
 
 - Projeto: `/mnt/c/Dev/markdown-para-pdf`
 - Stack: Vite + React 19 + TypeScript, sem backend
-- Git: branch `main`, 22 commits, working directory com mudanças não commitadas (correção checklist + teste + retrospectiva)
+- Git: branch `main`, 24 commits, working directory limpo
 - Testes: Vitest + RTL, 37 testes passando (12+10+15)
 - Build: `npm run build` OK, `npx tsc --noEmit` OK (strict mode)
-- Deploy: Vercel — `https://markdown-to-pdf-alpha.vercel.app/` (versão anterior, sem correção de checklist)
-- Retrospectiva: `/docs/evolution/retrospective-v1.md` gerada
+- Deploy: Vercel — `https://markdown-to-pdf-alpha.vercel.app/`
 - Maturidade: MVP validado com débitos técnicos menores
+- Arquitetura: mapeada em `docs/architecture/` (JSON, HTML, review)
 
 ## 3. O que já foi feito
 
-- **Sprint 0**: Mapeamento da codebase, git inicializado
-- **Sprint 00B**: Vitest + RTL configurados, 22 smoke tests
-- **Sprint 1** (7/7): jspdf, html2canvas, Tailwind migrados de CDN para npm. Strict mode habilitado.
-- **Sprint 2** (5/5): DOMPurify sanitização com whitelist. Nome do PDF descritivo. Validação 8MB. Modal de confirmação.
-- **Sprint 3** (4/4): `---` em code blocks não cria quebra de página. Preview vazio com mensagem. Numeração de página exclui capa. Encoding UTF-8 BOM + Latin-1 fallback.
-- **Sprint 4** (4/4): Header responsivo 320px. Botões com 44px área de toque. Notificações 5s. Timeout 30s na geração de PDF.
-- **Sprint 5** (5/5): GEMINI_API_KEY removida. Meta tags + favicon. vercel.json SPA redirect. Build de produção validado.
-- **Deploy**: Vercel — app rodando em produção
+- **Sprint 0–5** (25/25 tarefas): MVP completo — editor, toolbar, preview paginado, importação, configurações, capa, templates, heurísticas, exportação PDF, sanitização DOMPurify, notificações, deploy Vercel
 - **Auditoria final**: Aprovado com ressalvas (3 achados importantes, 0 críticos)
-- **Correção pós-auditoria**: XSS testado com 14 payloads reais, whitelist DOMPurify inspecionada, cobertura 22→36 testes
-- **Validação pós-correção**: Executada. Achado 9.1 corrigido. Achado 9.3 parcialmente corrigido. Achado 9.2 parcialmente validado. Novo bug encontrado: checklist sem checkbox.
-- **Correção de checklist**: `'input'` adicionado ao ALLOWED_TAGS em A4DocPreview.tsx. Teste de checkbox adicionado. 37/37 testes passando.
+- **Correção pós-auditoria**: XSS testado com 14 payloads, whitelist inspecionada, cobertura 22→36
+- **Validação pós-correção**: Executada. Achado 9.1 corrigido, 9.3 parcialmente corrigido. Novo bug encontrado: checklist sem checkbox.
+- **Correção de checklist**: `'input'` adicionado ao ALLOWED_TAGS. Teste adicionado. 37/37 testes.
+- **Commit `f727c8e`**: checklist fix + teste + retrospectiva + handoff (11 arquivos, 883 inserções)
+- **Deploy na Vercel**: Auto-deploy após push. Checkboxes validados em produção (4 inputs com checked/unchecked correto).
 - **Retrospectiva v1**: Gerada em `docs/evolution/retrospective-v1.md`
+- **Correção de oklch**: Plugin Vite `oklchFallbackPlugin` adicionado para converter oklch→hex no build. Bug: html2canvas não suporta oklch do Tailwind CSS 4.
+- **Mapeamento de arquitetura**: 3 arquivos gerados em `docs/architecture/` (JSON, HTML standalone, review em Markdown)
 
 ## 4. Decisões tomadas
 
@@ -46,62 +43,57 @@ MVP `markdown-para-pdf` completo, auditado e com correção pós-auditoria aplic
 - Nome do PDF deve conter referência ao documento
 - `input` adicionado ao ALLOWED_TAGS do DOMPurify para preservar task lists GFM
 
-Nenhuma decisão nova registrada nesta preparação de handoff (a decisão de adicionar `input` ao ALLOWED_TAGS é uma correção técnica, não uma decisão de produto).
+Nenhuma decisão nova registrada nesta preparação de handoff.
 
 ## 5. Arquivos importantes
 
 | Arquivo | Função | Observação |
 |---|---|---|
-| `docs/audit/validation-report.md` | Validação pós-correção | 16 seções, veredito "Ainda precisa de correções" |
+| `docs/audit/validation-report.md` | Validação pós-correção | 16 seções |
 | `docs/audit/final-audit.md` | Auditoria final | 20 seções, Aprovado com ressalvas |
-| `docs/audit/audit-fixes.md` | Correção pós-auditoria | 14 seções, XSS testado |
+| `docs/audit/audit-fixes.md` | Correção pós-auditoria | 14 seções |
 | `docs/audit/AUDIT_EVIDENCE.md` | Pacote de evidências | 759 linhas, 23 seções |
-| `docs/evolution/retrospective-v1.md` | Retrospectiva do ciclo v1 | 7 seções, gerada nesta sessão |
-| `docs/product/PRD_v1.1.md` | PRD consolidado | 1249 linhas, fonte principal |
+| `docs/evolution/retrospective-v1.md` | Retrospectiva do ciclo v1 | 7 seções |
+| `docs/product/PRD_v1.1.md` | PRD consolidado | 1249 linhas |
 | `docs/design/UI_UX_GUIDE.md` | Guia visual obrigatório | 1014 linhas, 17 seções |
 | `docs/evolution/DECISIONS.md` | 19 decisões ativas | Todos os PDs resolvidos |
-| `docs/evolution/CHANGELOG.md` | Histórico | 23+ entradas |
-| `docs/agent/agent-operating-rules.md` | Regras operacionais | Deve ser lido antes de agir |
+| `docs/evolution/CHANGELOG.md` | Histórico | 24+ entradas |
 | `components/A4DocPreview.tsx` | Preview A4 | DOMPurify com `input` em ALLOWED_TAGS |
-| `__tests__/xss-sanitization.test.ts` | Testes XSS + checkbox | 15 testes (14 XSS + 1 checkbox) |
+| `vite.config.ts` | Config Vite | Plugin oklch-to-srgb para html2canvas |
+| `__tests__/xss-sanitization.test.ts` | Testes XSS + checkbox | 15 testes |
 
 ## 6. Problemas encontrados
 
-- Checklist `- [x]`/`- [ ]` eram renderizados como bullets sem checkbox — corrigido nesta sessão
-- Fidelidade preview/PDF validada apenas parcialmente (DOM inspecionado, sem screenshots reais)
-- Chunk size 953KB sem code splitting (não bloqueante)
-- `og:url` agora aponta para URL real (corrigido em sessão anterior)
+Nenhum problema conhecido registrado. Checklist corrigido e deployado. Working directory limpo.
 
 ## 7. Tentativas realizadas
 
 | Tentativa | Resultado | Observação |
 |---|---|---|
 | Validar fidelidade via inspeção de DOM no browser | Funcionou | 6 páginas, numeração, tabela, blockquote corretos |
-| Gerar PDF via browser remoto (Browserbase) | Parcial | PDF gerado sem erros, mas browser remoto perdeu contexto após download |
-| Análise visual via screenshot | Falhou | Modelo sem visão nativa; screenshot salvo mas não analisado |
-| Teste Node.js de DOMPurify + marked | Funcionou | Confirmou que checkboxes eram removidos antes da correção |
-| Adicionar `input` ao ALLOWED_TAGS | Funcionou | 37/37 testes, tsc OK, build OK |
-| Teste de checkbox no browser (Vercel) | Não aplicável | Fix não deployado ainda |
+| Corrigir checklist (adicionar `input` ao ALLOWED_TAGS) | Funcionou | 37/37 testes, checkboxes preservados |
+| Deploy na Vercel via push | Funcionou | Auto-deploy após commit `f727c8e` |
+| Validar checkboxes em produção | Funcionou | 4 inputs com checked/unchecked correto |
+| Corrigir oklch (plugin Vite oklch→hex) | Funcionou | 0 oklch no CSS de saída, 37/37 testes |
+| Análise visual via screenshot | Falhou | Modelo sem visão nativa |
 
 ## 8. O que funcionou
 
-- Inspeção de DOM no browser para validar estrutura do preview
-- Teste Node.js isolado para confirmar bug de checklist
 - Correção pontual (1 linha) sem efeitos colaterais
-- Atualização do teste XSS para cobrir novo comportamento
+- Teste Node.js isolado para confirmar bug antes de corrigir
+- Deploy automático via Vercel após push
+- Validação de checkboxes no browser em produção
 - Framework de continuidade permitiu sessão produtiva sem recomeçar
 
 ## 9. O que não funcionou
 
 - Análise visual de screenshots (modelo sem visão nativa)
-- Download de PDF via browser remoto (contexto perdido)
-- Validação completa de fidelidade (sem screenshots lado a lado)
+- Validação completa de fidelidade preview/PDF (sem screenshots lado a lado)
 
 ## 10. Pendências
 
 | Pendência | Impacto | Prioridade |
 |---|---|---|
-| Deploy da correção de checklist na Vercel | Usuários veem bullets em vez de checkboxes | Alta |
 | Capturar screenshots preview/PDF para evidência visual | Fidelidade não tem evidência visual completa | Média |
 | Adicionar teste de componente (A4DocPreview render) | Cobertura insuficiente para regressão | Média |
 | Code splitting (chunk 953KB) | First paint lento em conexões lentas | Baixa |
@@ -112,7 +104,6 @@ Nenhuma decisão nova registrada nesta preparação de handoff (a decisão de ad
 
 | Risco | Área | Severidade | Observação |
 |---|---|---|---|
-| Fix de checklist não deployado | Deploy | Alta | Usuários veem bullets em vez de checkboxes até deploy |
 | Fidelidade preview/PDF sem screenshots | Produto | Média | Requisito PRD 7.3 sem evidência visual completa |
 | Testes insuficientes (sem componente/e2e) | Engenharia | Média | 37 testes, mas sem teste de componente ou integração |
 | Chunk size 953KB | Performance | Baixa | First paint pode ser lento em 2G/3G |
@@ -120,9 +111,11 @@ Nenhuma decisão nova registrada nesta preparação de handoff (a decisão de ad
 
 ## 12. Próxima ação recomendada
 
-1. Fazer commit e push da correção de checklist + teste + retrospectiva
-2. Deploy na Vercel (automático via push ou manual)
-3. Validar no browser em produção que checkboxes aparecem corretamente
+Iniciar preparação para v2. Prioridades (consultar retrospectiva-v1.md):
+1. Code splitting (dynamic import jsPDF/html2canvas) — 2 linhas, ROI alto
+2. Teste de componente (A4DocPreview render) — RTL já configurado
+3. Lighthouse accessibility audit — comando único
+4. Capturar screenshots para evidência visual de fidelidade
 
 ## 13. O que o próximo agente NÃO deve fazer
 
@@ -135,10 +128,10 @@ Nenhuma decisão nova registrada nesta preparação de handoff (a decisão de ad
 - Não ignorar `docs/design/UI_UX_GUIDE.md` para decisões visuais
 - Não alterar funcionalidades sem justificativa
 - Não executar tarefas sem autorização do usuário
-- Não remover `input` do ALLOWED_TAGS (foi adicionado para preservar task lists)
+- Não remover `input` do ALLOWED_TAGS
 
 ## 14. Segurança para troca de sessão
 
 - Seguro rodar `/new`? Sim
-- Motivo: MVP completo, auditado, correção de checklist aplicada e testada (37/37), retrospectiva gerada, todos os arquivos de continuidade atualizados. Working directory tem mudanças não commitadas (correção + teste + retrospectiva).
+- Motivo: MVP completo, auditado, correção deployada e validada em produção, retrospectiva gerada, working directory limpo, todos os arquivos de continuidade atualizados.
 - Nome sugerido para a nova sessão: `markdown-para-pdf-v2-prep`

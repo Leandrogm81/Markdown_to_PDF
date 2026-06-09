@@ -1,32 +1,31 @@
 # Próximas Ações
 
-Atualizado em: 2026-06-08
+Atualizado em: 2026-06-09
 Projeto: `/mnt/c/Dev/markdown-para-pdf`
 
 ## 1. Próxima ação imediata
 
-Commit e push da correção de checklist + teste + retrospectiva. Deploy na Vercel.
+Iniciar preparação para v2. Consultar `docs/evolution/retrospective-v1.md` para prioridades.
 
 ## 2. Status atual
 
-MVP completo, auditado, ciclo v1 encerrado. Correção de checklist aplicada (checkbox preservado após DOMPurify). 37 testes passando. Retrospectiva v1 gerada. Working directory com mudanças não commitadas.
+MVP completo, auditado, checklist corrigido, oklch corrigido. 37 testes passando. Arquitetura mapeada. Working directory limpo.
 
 ## 3. Sequência de ações
 
 ```
-1. Commit e push: checklist fix + teste + retrospectiva + handoff  (Alta)
-2. Validar checkboxes no browser em produção                       (Alta)
-3. Capturar screenshots preview/PDF para evidência visual          (Média)
-4. Adicionar teste de componente (A4DocPreview render)             (Média)
-5. Code splitting (dynamic import jsPDF/html2canvas)               (Baixa)
-6. Lighthouse accessibility audit                                  (Média)
-7. Cross-browser testing (Firefox, Safari, Edge)                   (Média)
+1. Code splitting: dynamic import jsPDF/html2canvas          (Alta — 2 linhas, ROI alto)
+2. Teste de componente: A4DocPreview render                  (Média — RTL já configurado)
+3. Lighthouse accessibility audit                            (Média — comando único)
+4. Capturar screenshots preview/PDF                          (Média — evidência visual)
+5. Cross-browser testing (Firefox, Safari, Edge)             (Média — teste manual)
+6. ESLint com regras React/TS                                (Baixa — config inicial)
 ```
 
 ## 4. Não fazer
 
 - Não recomeçar sprints ou tarefas.
-- Não criar novas funcionalidades.
+- Não criar novas funcionalidades sem autorização.
 - Não alterar templates/presets/temas.
 - Não adicionar autosave ou tema escuro.
 - Não remover `input` do ALLOWED_TAGS.

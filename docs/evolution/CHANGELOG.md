@@ -1,5 +1,58 @@
 # CHANGELOG
 
+## 2026-06-09 — Correção de bug oklch + mapeamento de arquitetura
+
+### Resumo
+Bug de geração de PDF corrigido: Tailwind CSS 4 gera cores em formato `oklch()` (CSS Color Level 4) que o `html2canvas` não suporta. Erro: "Attempting to parse an unsupported color function oklch". Correção: plugin Vite `oklchFallbackPlugin` em `vite.config.ts` que converte todas as cores oklch para hex sRGB no momento do build via hook `generateBundle`. Conversão matemática oklch→linear sRGB→hex implementada manualmente. 0 ocorrências de oklch no CSS de saída após correção. Arquitetura do projeto mapeada em 3 arquivos conceituais.
+
+### Arquivos afetados
+- `vite.config.ts` (plugin oklch-to-srgb adicionado — ~80 linhas)
+- `docs/architecture/architecture.map.json` (criado — mapa JSON da arquitetura)
+- `docs/architecture/architecture.html` (criado — visualização standalone)
+- `docs/architecture/architecture.review.md` (criado — revisão conceitual)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+- `docs/agent/HANDOFF.md` (atualizado)
+
+### Motivo
+Bug reportado pelo usuário: PDF não era gerado, erro de oklch no console. Causa raiz: Tailwind CSS 4 usa oklch como formato de cor padrão, html2canvas só suporta hex/rgb/hsl.
+
+### Evidência
+- `npm test` → 37/37 passando
+- `npx tsc --noEmit` → OK
+- `npm run build` → OK
+- `grep -c "oklch" dist/assets/*.css` → 0 ocorrências
+
+### Pendências
+- Deploy na Vercel (aguardando push)
+- Testar geração de PDF em produção após deploy
+
+---
+
+## 2026-06-08 — Deploy e validação de checklist em produção
+
+### Resumo
+Commit `f727c8e` pushado para GitHub. Deploy automático na Vercel concluído. Checklists `- [x]`/`- [ ]` validados em produção: 4 inputs com `type="checkbox"`, `disabled=true`, checked/unchecked correto. HANDOFF e CURRENT_STATE atualizados para ciclo v2.
+
+### Arquivos afetados
+- `docs/agent/HANDOFF.md` (atualizado)
+- `docs/agent/CURRENT_STATE.md` (atualizado)
+- `docs/evolution/CHANGELOG.md` (atualizado)
+
+### Motivo
+Confirmar que a correção de checklist funciona em produção após deploy.
+
+### Evidência
+- `git push` → `f727c8e` pushado com sucesso
+- Browser em produção: 4 checkboxes encontrados com checked/unchecked correto
+- Working directory limpo (`git status` sem mudanças)
+
+### Pendências
+- Capturar screenshots preview/PDF para evidência visual (Média)
+- Iniciar ciclo v2 (code splitting, testes de componente, Lighthouse)
+
+---
+
 ## 2026-06-08 — Correção de checklist: checkbox preservado após sanitização DOMPurify
 
 ### Resumo
